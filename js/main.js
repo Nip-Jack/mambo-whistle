@@ -275,7 +275,8 @@ class KazooApp {
 
             //  注册专用 Worklet 回调 (避免与 ScriptProcessor 路径冲突)
             this.audioIO.onWorkletPitchFrame((pitchFrame, timestamp) => {
-                const receiveTime = performance.now();
+                // Use AudioContext.currentTime for latency measurement (same time source as Worklet)
+                const receiveTime = this.audioIO.audioContext ? this.audioIO.audioContext.currentTime * 1000 : performance.now();
                 this.handleWorkletPitchFrame(pitchFrame, timestamp, receiveTime);
             });
 
