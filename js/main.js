@@ -155,7 +155,7 @@ class KazooApp {
      * 绑定事件
      */
     bindEvents() {
-        // 开始/停止
+        // 开始/停止 - 注意：UIManager 也在绑定这些按钮，检查是否会双重触发
         this.ui.startBtn.addEventListener('click', () => this.start());
         this.ui.stopBtn.addEventListener('click', () => this.stop());
 

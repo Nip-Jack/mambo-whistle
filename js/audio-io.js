@@ -773,10 +773,10 @@ class AudioIO {
     }
 }
 
-// 导出单例 (可选)
-const audioIO = new AudioIO();
+// 注意: 不要在这里创建全局单例! 会导致双重实例化
+// 每个使用者应该自己创建实例: new AudioIO()
 
-// 兼容旧代码: 导出类和实例
+// 兼容旧代码: 仅导出类
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { AudioIO, audioIO };
+    module.exports = { AudioIO };
 }
