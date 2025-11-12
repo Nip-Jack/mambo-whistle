@@ -27,23 +27,23 @@
     <!-- Custom styles (overrides and animations) -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="pt-20">
     <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="navbar-content">
-            <div class="navbar-brand">Kazoo Proto</div>
-            <div class="navbar-actions">
+    <nav class="bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-opacity-90">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between max-w-7xl">
+            <div class="text-2xl font-bold text-blue-900">Kazoo Proto</div>
+            <div class="flex items-center gap-6">
                 <!-- 模式切换开关 (Phase 2 A/B Testing) -->
-                <div class="mode-switcher">
-                    <span class="mode-label">Mode:</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="modeToggle" checked>
-                        <span class="toggle-slider"></span>
+                <div class="flex items-center gap-3 px-3 py-2 bg-gray-50 rounded-lg">
+                    <span class="text-sm text-gray-600 font-medium">Mode:</span>
+                    <label class="toggle-switch relative inline-block w-12 h-6">
+                        <input type="checkbox" id="modeToggle" checked class="opacity-0 w-0 h-0">
+                        <span class="toggle-slider absolute cursor-pointer inset-0 bg-gray-300 rounded-full transition-all duration-300 before:absolute before:content-[''] before:h-5 before:w-5 before:left-0.5 before:bottom-0.5 before:bg-white before:rounded-full before:transition-all before:duration-300"></span>
                     </label>
-                    <span class="mode-text" id="modeText">Continuous</span>
-                    <span class="beta-badge">BETA</span>
+                    <span class="text-sm text-gray-900 font-semibold min-w-[80px]" id="modeText">Continuous</span>
+                    <span class="bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">BETA</span>
                 </div>
-                <button class="btn-text" id="helpBtn">Help</button>
+                <button class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-blue-50" id="helpBtn">Help</button>
             </div>
         </div>
     </nav>
@@ -90,46 +90,46 @@
                 </div>
                 <p class="section-subtitle">Each instrument has unique tonal characteristics. You can change it anytime!</p>
 
-                <div class="instrument-grid">
-                    <button class="instrument-btn active" data-instrument="saxophone">
-                        <span class="instrument-icon">🎷</span>
-                        <span class="instrument-name">Saxophone</span>
-                        <span class="instrument-desc">Warm & Expressive</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                    <button class="bg-blue-50 border-2 border-blue-500 ring-2 ring-blue-500 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-200 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active" data-instrument="saxophone">
+                        <span class="text-4xl">🎷</span>
+                        <span class="font-semibold text-gray-900 text-lg">Saxophone</span>
+                        <span class="text-sm text-gray-500">Warm & Expressive</span>
                     </button>
-                    <button class="instrument-btn" data-instrument="violin">
-                        <span class="instrument-icon">🎻</span>
-                        <span class="instrument-name">Violin</span>
-                        <span class="instrument-desc">Rich & Lyrical</span>
+                    <button class="bg-white border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-200 cursor-pointer hover:shadow-lg hover:scale-105 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" data-instrument="violin">
+                        <span class="text-4xl">🎻</span>
+                        <span class="font-semibold text-gray-900 text-lg">Violin</span>
+                        <span class="text-sm text-gray-500">Rich & Lyrical</span>
                     </button>
-                    <button class="instrument-btn" data-instrument="piano">
-                        <span class="instrument-icon">🎹</span>
-                        <span class="instrument-name">Piano</span>
-                        <span class="instrument-desc">Classic & Clear</span>
+                    <button class="bg-white border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-200 cursor-pointer hover:shadow-lg hover:scale-105 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" data-instrument="piano">
+                        <span class="text-4xl">🎹</span>
+                        <span class="font-semibold text-gray-900 text-lg">Piano</span>
+                        <span class="text-sm text-gray-500">Classic & Clear</span>
                     </button>
-                    <button class="instrument-btn" data-instrument="flute">
-                        <span class="instrument-icon">🪈</span>
-                        <span class="instrument-name">Flute</span>
-                        <span class="instrument-desc">Bright & Airy</span>
+                    <button class="bg-white border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-200 cursor-pointer hover:shadow-lg hover:scale-105 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" data-instrument="flute">
+                        <span class="text-4xl">🪈</span>
+                        <span class="font-semibold text-gray-900 text-lg">Flute</span>
+                        <span class="text-sm text-gray-500">Bright & Airy</span>
                     </button>
-                    <button class="instrument-btn" data-instrument="guitar">
-                        <span class="instrument-icon">🎸</span>
-                        <span class="instrument-name">Guitar</span>
-                        <span class="instrument-desc">Plucked & Natural</span>
+                    <button class="bg-white border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-200 cursor-pointer hover:shadow-lg hover:scale-105 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" data-instrument="guitar">
+                        <span class="text-4xl">🎸</span>
+                        <span class="font-semibold text-gray-900 text-lg">Guitar</span>
+                        <span class="text-sm text-gray-500">Plucked & Natural</span>
                     </button>
-                    <button class="instrument-btn" data-instrument="synth">
-                        <span class="instrument-icon">🎛️</span>
-                        <span class="instrument-name">Synth</span>
-                        <span class="instrument-desc">Electronic & Modern</span>
+                    <button class="bg-white border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-200 cursor-pointer hover:shadow-lg hover:scale-105 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2" data-instrument="synth">
+                        <span class="text-4xl">🎛️</span>
+                        <span class="font-semibold text-gray-900 text-lg">Synth</span>
+                        <span class="text-sm text-gray-500">Electronic & Modern</span>
                     </button>
-                    <button class="instrument-btn" disabled style="opacity: 0.4; cursor: not-allowed;">
-                        <span class="instrument-icon">🎺</span>
-                        <span class="instrument-name">Trumpet</span>
-                        <span class="instrument-desc">To Be Continued...</span>
+                    <button class="bg-white border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-200 opacity-40 cursor-not-allowed" disabled>
+                        <span class="text-4xl">🎺</span>
+                        <span class="font-semibold text-gray-900 text-lg">Trumpet</span>
+                        <span class="text-sm text-gray-500">To Be Continued...</span>
                     </button>
-                    <button class="instrument-btn" disabled style="opacity: 0.4; cursor: not-allowed;">
-                        <span class="instrument-icon">🥁</span>
-                        <span class="instrument-name">Drums</span>
-                        <span class="instrument-desc">Coming Soon!</span>
+                    <button class="bg-white border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2 transition-all duration-200 opacity-40 cursor-not-allowed" disabled>
+                        <span class="text-4xl">🥁</span>
+                        <span class="font-semibold text-gray-900 text-lg">Drums</span>
+                        <span class="text-sm text-gray-500">Coming Soon!</span>
                     </button>
                 </div>
             </div>

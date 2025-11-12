@@ -172,8 +172,18 @@ class KazooApp {
         // 乐器选择
         this.ui.instrumentBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                this.ui.instrumentBtns.forEach(b => b.classList.remove('active'));
+                // 移除所有按钮的选中状态 (Tailwind classes)
+                this.ui.instrumentBtns.forEach(b => {
+                    b.classList.remove('active');
+                    b.classList.remove('bg-blue-50', 'border-blue-500', 'ring-2', 'ring-blue-500', 'shadow-lg');
+                    b.classList.add('bg-white', 'border-gray-200', 'cursor-pointer', 'hover:shadow-lg', 'hover:scale-105', 'hover:-translate-y-1');
+                });
+
+                // 添加当前按钮的选中状态
                 e.currentTarget.classList.add('active');
+                e.currentTarget.classList.remove('bg-white', 'border-gray-200', 'cursor-pointer', 'hover:shadow-lg', 'hover:scale-105', 'hover:-translate-y-1');
+                e.currentTarget.classList.add('bg-blue-50', 'border-blue-500', 'ring-2', 'ring-blue-500', 'shadow-lg');
+
                 const instrument = e.currentTarget.dataset.instrument;
 
                 // 更新状态徽章
