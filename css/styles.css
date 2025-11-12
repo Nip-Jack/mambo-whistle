@@ -652,6 +652,16 @@ body {
     }
 }
 
+/* 无障碍支持 - 减少动画 */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
     .hero-title { font-size: 36px; }
