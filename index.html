@@ -455,20 +455,10 @@
                     document.body.appendChild(div);
                 }
             });
-            
-            // 修复 Instrument 按钮点击逻辑
-            // NOTE: 主要的乐器选择逻辑在 main.js 中处理 (lines 174-199)
-            // 这里只处理视觉激活状态 (Google 彩色边框)
-            const btns = document.querySelectorAll('.instrument-btn');
-            btns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // 移除所有按钮的 active 类
-                    btns.forEach(b => b.classList.remove('active'));
-                    // 添加当前按钮的 active 类
-                    this.classList.add('active');
-                });
-            });
-            
+
+            // 🔥 [ARCHITECTURE FIX] 乐器按钮逻辑已移至 main.js (lines 174-196)
+            // 移除了此处的重复代码，保持 HTML 纯净
+
             // 修复 Tips Toggle
             const helpToggle = document.getElementById('helpToggle');
             const helpContent = document.getElementById('helpContent');

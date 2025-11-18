@@ -288,14 +288,16 @@ class PitchDetectorWorklet extends AudioWorkletProcessor {
         // 音符映射表
         this.noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
-        // 音频累积缓冲 (YIN需要更大的窗口)
-        this.accumulationBuffer = new Float32Array(2048); // YIN 推荐至少 2048
+        // 🔥 [LATENCY FIX] 音频累积缓冲优化
+        // 从 2048 (46ms) 减少到 1024 (23ms)，包含约 2 个低频周期 (80Hz = 12.5ms)
+        // 这是达成 <50ms 目标的关键物理优化
+        this.accumulationBuffer = new Float32Array(1024);
         this.accumulationIndex = 0;
         this.accumulationFull = false;
 
-        //  FFT 处理器
-        this.fft = new SimpleFFT(2048);
-        console.log('[PitchWorklet]  SimpleFFT 初始化完成 (2048 点)');
+        //  FFT 处理器 (同步缩小到 1024 点)
+        this.fft = new SimpleFFT(1024);
+        console.log('[PitchWorklet] ⚡ Optimized Buffer: 1024 samples (~23ms, -50% latency)');
 
         //  EMA 平滑滤波器
         this.volumeFilter = new EMAFilter(0.3);       // volume 平滑

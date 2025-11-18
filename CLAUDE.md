@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**Version**: 0.3.0 (Performance First)
+**Version**: 0.4.0 (Synthesis Optimization)
 
 Kazoo Proto Web is a real-time voice-to-instrument system using Web Audio API. Users sing/hum into their microphone, and the system detects pitch and expression features to drive virtual instruments in real-time.
 

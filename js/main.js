@@ -176,6 +176,12 @@ class KazooApp {
             btn.addEventListener('click', (e) => {
                 const instrument = e.currentTarget.dataset.instrument;
 
+                // 🔥 [ARCHITECTURE FIX] 视觉切换逻辑统一到 main.js，移除 HTML 内联重复代码
+                // 移除其他按钮的 active 类
+                this.ui.instrumentBtns.forEach(b => b.classList.remove('active'));
+                // 激活当前按钮（Google 彩色边框）
+                e.currentTarget.classList.add('active');
+
                 // 更新状态徽章 - 从 button 中提取乐器名称
                 const instrumentNameEl = e.currentTarget.querySelector('.font-semibold');
                 if (instrumentNameEl && this.ui.instrumentStatus) {
@@ -245,6 +251,16 @@ class KazooApp {
             this.ui.stopBtn.classList.remove('hidden');
             this.ui.statusBar.classList.remove('hidden');
             this.ui.visualizer.classList.remove('hidden');
+
+            // 🔥 [UX FIX] 强制刷新 Canvas 尺寸，解决 hidden 导致的黑屏问题
+            // Canvas 在 display:none 状态下初始化时尺寸为 0，显示后需要重新计算
+            requestAnimationFrame(() => {
+                if (this.resizeVisualizer) {
+                    this.resizeVisualizer();
+                    console.log('[Main] ✓ Visualizer resized after showing');
+                }
+            });
+
             this.ui.systemStatus.textContent = `Running (${this.useContinuousMode ? 'Continuous' : 'Legacy'})`;
             this.ui.systemStatus.classList.add('active');
             this.ui.recordingStatus.textContent = 'Playing';
