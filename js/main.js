@@ -97,7 +97,20 @@ class KazooApp {
             strengthSlider: document.getElementById('strengthSlider'),
             speedSlider: document.getElementById('speedSlider'),
             strengthValue: document.getElementById('strengthValue'),
-            speedValue: document.getElementById('speedValue')
+            speedValue: document.getElementById('speedValue'),
+
+            // Settings Modal
+            settingsBtn: document.getElementById('settingsBtn'),
+            settingsModal: document.getElementById('settingsModal'),
+            settingsBackdrop: document.getElementById('settingsBackdrop'),
+            closeSettingsBtn: document.getElementById('closeSettingsBtn'),
+            settingsPanel: document.getElementById('settingsPanel'),
+
+            // Effects UI
+            reverbSlider: document.getElementById('reverbSlider'),
+            delaySlider: document.getElementById('delaySlider'),
+            reverbValue: document.getElementById('reverbValue'),
+            delayValue: document.getElementById('delayValue')
         };
 
         // 可视化设置
@@ -191,6 +204,35 @@ class KazooApp {
         this.ui.startBtn.addEventListener('click', () => this.start());
         this.ui.stopBtn.addEventListener('click', () => this.stop());
 
+        // Settings Modal Logic
+        const openSettings = () => {
+            if (this.ui.settingsModal) {
+                this.ui.settingsModal.classList.remove('hidden');
+                // Trigger reflow
+                void this.ui.settingsModal.offsetWidth;
+                // Animate in
+                if (this.ui.settingsBackdrop) this.ui.settingsBackdrop.classList.remove('opacity-0');
+                if (this.ui.settingsPanel) this.ui.settingsPanel.classList.remove('translate-x-full');
+            }
+        };
+
+        const closeSettings = () => {
+            if (this.ui.settingsModal) {
+                // Animate out
+                if (this.ui.settingsBackdrop) this.ui.settingsBackdrop.classList.add('opacity-0');
+                if (this.ui.settingsPanel) this.ui.settingsPanel.classList.add('translate-x-full');
+                
+                // Wait for transition
+                setTimeout(() => {
+                    this.ui.settingsModal.classList.add('hidden');
+                }, 300);
+            }
+        };
+
+        if (this.ui.settingsBtn) this.ui.settingsBtn.addEventListener('click', openSettings);
+        if (this.ui.closeSettingsBtn) this.ui.closeSettingsBtn.addEventListener('click', closeSettings);
+        if (this.ui.settingsBackdrop) this.ui.settingsBackdrop.addEventListener('click', closeSettings);
+
         // Device Selection
         if (this.ui.audioInputSelect) {
             this.ui.audioInputSelect.addEventListener('change', (e) => {
@@ -261,6 +303,25 @@ class KazooApp {
                     // Slider 0-100 -> Speed 0.0-1.0
                     this.continuousSynthEngine.setRetuneSpeed(val / 100);
                 }
+            });
+        }
+
+        // Effects Controls (Placeholders)
+        if (this.ui.reverbSlider) {
+            this.ui.reverbSlider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                this.ui.reverbValue.textContent = `${val}%`;
+                if (this.continuousSynthEngine) {
+                    this.continuousSynthEngine.setReverbWet(val / 100);
+                }
+            });
+        }
+
+        if (this.ui.delaySlider) {
+            this.ui.delaySlider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                this.ui.delayValue.textContent = `${val}%`;
+                // TODO: Wire up Delay effect in Phase 3
             });
         }
 
