@@ -18,22 +18,8 @@
             colors: {
               apple: { text: '#1D1D1F', gray: '#86868B', sub: '#6e6e73' }
             },
-            animation: {
-              'blob': 'blob 10s infinite',
-              'shine': 'shine 2s infinite',
-            },
-            keyframes: {
-              blob: {
-                '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                '100%': { transform: 'translate(0px, 0px) scale(1)' }
-              },
-              shine: {
-                '0%': { transform: 'translateX(-100%)' },
-                '100%': { transform: 'translateX(100%)' }
-              }
-            },
+            animation: {},
+            keyframes: {},
             backgroundImage: {
               'google-gradient': 'linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853)',
             }
@@ -60,11 +46,7 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
         
-        /* 强制硬件加速，解决闪烁问题 */
-        .gpu-accelerated {
-            transform: translateZ(0);
-            will-change: transform;
-        }
+        /* GPU加速已移除以降低GPU占用 */
 
         /* === Google 边框修复核心代码 === */
         .instrument-btn {
@@ -76,7 +58,6 @@
             position: relative;
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(12px);
-            transition: all 0.3s ease;
             z-index: 10;
             border: 1px solid rgba(255,255,255,0.5);
         }
@@ -87,11 +68,8 @@
             inset: -3px; /* 边框宽度 */
             border-radius: 26px; /* 比内部圆角大一点 */
             background: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853);
-            background-size: 300% 300%;
             z-index: 0; /* 在卡片下面 */
             opacity: 0;
-            transition: opacity 0.3s ease;
-            animation: borderRotate 4s linear infinite;
         }
 
         /* 激活状态：显示边框，卡片变白 */
@@ -102,13 +80,6 @@
         .instrument-btn.active .card-inner {
             background: #FFFFFF; /* 选中时卡片变实心白，对比度更高 */
             border-color: transparent;
-            transform: scale(0.98); /* 轻微按压感 */
-        }
-
-        @keyframes borderRotate {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         /* 开关样式 */
@@ -116,15 +87,15 @@
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .toggle-slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #e5e5e5; transition: .4s; border-radius: 34px;
+            background-color: #e5e5e5; border-radius: 34px;
         }
         .toggle-slider:before {
             position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px;
-            background-color: white; transition: .4s; border-radius: 50%;
+            background-color: white; border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         input:checked + .toggle-slider { background-color: #34A853; }
-        input:checked + .toggle-slider:before { transform: translateX(20px); }
+        input:checked + .toggle-slider:before { left: 22px; }
 
         /* 表单交互 */
         .input-group:focus-within { box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2); border-color: #4285F4; }
@@ -134,19 +105,16 @@
 </head>
 <body class="bg-[#F5F5F7] text-[#1D1D1F] min-h-screen relative">
 
-    <!-- 背景：添加 gpu-accelerated 防止闪烁 -->
+    <!-- 背景：静态背景，无动画以降低GPU占用 -->
     <div class="fixed inset-0 z-0 pointer-events-none">
-        <div class="absolute top-[-10%] left-[10%] w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-50 animate-blob gpu-accelerated"></div>
-        <div class="absolute top-[-10%] right-[10%] w-96 h-96 bg-yellow-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-50 animate-blob animation-delay-2000 gpu-accelerated"></div>
-        <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-50 animate-blob animation-delay-4000 gpu-accelerated"></div>
-        <div class="absolute inset-0 bg-white/40 backdrop-blur-[1px]"></div>
+        <div class="absolute inset-0 bg-white/40"></div>
     </div>
 
     <!-- 导航栏 -->
-    <nav class="fixed top-0 inset-x-0 z-50 glass border-b-0 transition-all duration-300">
+    <nav class="fixed top-0 inset-x-0 z-50 glass border-b-0">
         <div class="max-w-6xl mx-auto px-6 h-[64px] flex items-center justify-between">
             <a href="#" class="flex items-center gap-3 group no-underline">
-                <div class="w-9 h-9 bg-black rounded-xl flex items-center justify-center text-lg shadow-lg text-white group-hover:scale-105 transition-transform">
+                <div class="w-9 h-9 bg-black rounded-xl flex items-center justify-center text-lg shadow-lg text-white">
                     🎧
                 </div>
                 <div>
@@ -156,9 +124,9 @@
             </a>
 
             <div class="hidden md:flex items-center gap-8 text-[13px] font-medium text-apple-sub">
-                <a href="#instrumentSection" class="hover:text-[#1D1D1F] transition-colors">Instruments</a>
-                <a href="#visualizer" class="hover:text-[#1D1D1F] transition-colors">Visualizer</a>
-                <a href="#tipsSection" class="hover:text-[#1D1D1F] transition-colors">Tips</a>
+                <a href="#instrumentSection" class="hover:text-[#1D1D1F]">Instruments</a>
+                <a href="#visualizer" class="hover:text-[#1D1D1F]">Visualizer</a>
+                <a href="#tipsSection" class="hover:text-[#1D1D1F]">Tips</a>
             </div>
 
             <div class="flex items-center gap-4">
@@ -181,7 +149,6 @@
             <section class="text-center mb-20 relative">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[11px] font-bold tracking-wide uppercase mb-6">
                     <span class="relative flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                     </span>
                     Web Audio API Native
@@ -214,7 +181,7 @@
                         <button class="instrument-btn active group relative w-full text-left focus:outline-none" data-instrument="saxophone">
                             <div class="card-border-gradient"></div> <!-- 独立的背景层 -->
                             <div class="card-inner h-44 rounded-[24px] p-6 flex flex-col justify-between">
-                                <span class="text-4xl filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">🎷</span>
+                                <span class="text-4xl filter drop-shadow-md">🎷</span>
                                 <div>
                                     <p class="font-semibold text-lg text-[#1D1D1F]">Saxophone</p>
                                     <p class="text-[11px] text-apple-gray mt-1">Expressive Lead</p>
@@ -225,7 +192,7 @@
                         <button class="instrument-btn group relative w-full text-left focus:outline-none" data-instrument="violin">
                             <div class="card-border-gradient"></div>
                             <div class="card-inner h-44 rounded-[24px] p-6 flex flex-col justify-between">
-                                <span class="text-4xl filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">🎻</span>
+                                <span class="text-4xl filter drop-shadow-md">🎻</span>
                                 <div>
                                     <p class="font-semibold text-lg text-[#1D1D1F]">Violin</p>
                                     <p class="text-[11px] text-apple-gray mt-1">Vibrato Ready</p>
@@ -236,7 +203,7 @@
                         <button class="instrument-btn group relative w-full text-left focus:outline-none" data-instrument="piano">
                             <div class="card-border-gradient"></div>
                             <div class="card-inner h-44 rounded-[24px] p-6 flex flex-col justify-between">
-                                <span class="text-4xl filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">🎹</span>
+                                <span class="text-4xl filter drop-shadow-md">🎹</span>
                                 <div>
                                     <p class="font-semibold text-lg text-[#1D1D1F]">Piano</p>
                                     <p class="text-[11px] text-apple-gray mt-1">Percussive</p>
@@ -247,7 +214,7 @@
                         <button class="instrument-btn group relative w-full text-left focus:outline-none" data-instrument="flute">
                             <div class="card-border-gradient"></div>
                             <div class="card-inner h-44 rounded-[24px] p-6 flex flex-col justify-between">
-                                <span class="text-4xl filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">🎼</span>
+                                <span class="text-4xl filter drop-shadow-md">🎼</span>
                                 <div>
                                     <p class="font-semibold text-lg text-[#1D1D1F]">Flute</p>
                                     <p class="text-[11px] text-apple-gray mt-1">Pure Sine</p>
@@ -258,7 +225,7 @@
                         <button class="instrument-btn group relative w-full text-left focus:outline-none" data-instrument="guitar">
                             <div class="card-border-gradient"></div>
                             <div class="card-inner h-44 rounded-[24px] p-6 flex flex-col justify-between">
-                                <span class="text-4xl filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">🎸</span>
+                                <span class="text-4xl filter drop-shadow-md">🎸</span>
                                 <div>
                                     <p class="font-semibold text-lg text-[#1D1D1F]">Guitar</p>
                                     <p class="text-[11px] text-apple-gray mt-1">Plucked</p>
@@ -269,7 +236,7 @@
                         <button class="instrument-btn group relative w-full text-left focus:outline-none" data-instrument="synth">
                             <div class="card-border-gradient"></div>
                             <div class="card-inner h-44 rounded-[24px] p-6 flex flex-col justify-between">
-                                <span class="text-4xl filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">🎛️</span>
+                                <span class="text-4xl filter drop-shadow-md">🎛️</span>
                                 <div>
                                     <p class="font-semibold text-lg text-[#1D1D1F]">Synth</p>
                                     <p class="text-[11px] text-apple-gray mt-1">Sawtooth</p>
@@ -284,7 +251,7 @@
                     <div class="flex items-center justify-between mb-5 pl-1">
                         <h2 class="text-xl font-semibold tracking-tight">Live Control</h2>
                         <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                             <span id="recordingStatus" class="text-[11px] font-bold text-apple-gray uppercase">Standby</span>
                         </div>
                     </div>
@@ -305,12 +272,12 @@
                                  如果 JS 使用 toggle('hidden') 或 remove('hidden')，
                                  初始状态必须正确，否则会 crash 或显示双按钮。
                             -->
-                            <button id="startBtn" class="w-full h-14 bg-black hover:bg-gray-900 text-white text-[15px] font-semibold rounded-full transition-all duration-300 transform active:scale-[0.98] shadow-lg flex items-center justify-center gap-2">
+                            <button id="startBtn" class="w-full h-14 bg-black hover:bg-gray-900 text-white text-[15px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                 Start Engine
                             </button>
                             
-                            <button id="stopBtn" class="hidden w-full h-14 bg-red-500 hover:bg-red-600 text-white text-[15px] font-semibold rounded-full transition-all duration-300 transform active:scale-[0.98] shadow-lg flex items-center justify-center gap-2">
+                            <button id="stopBtn" class="hidden w-full h-14 bg-red-500 hover:bg-red-600 text-white text-[15px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
                                 Stop Session
                             </button>
@@ -403,18 +370,18 @@
                         </p>
 
                         <form id="waitlistForm" class="max-w-md mx-auto relative" onsubmit="event.preventDefault(); handleFormSubmit();">
-                            <div class="input-group relative flex items-center transition-all duration-300 rounded-full bg-gray-50 border border-gray-200 p-1">
-                                <div class="pl-4 text-gray-400 input-icon transition-colors">
+                            <div class="input-group relative flex items-center rounded-full bg-gray-50 border border-gray-200 p-1">
+                                <div class="pl-4 text-gray-400 input-icon">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                 </div>
                                 <input type="email" placeholder="Enter your email address" required
                                     class="flex-1 bg-transparent border-none outline-none px-4 py-3 text-[#1D1D1F] placeholder-gray-400 text-sm font-medium">
                                 <button type="submit" id="submitBtn"
-                                    class="bg-[#1D1D1F] hover:bg-black text-white rounded-full px-6 py-3 text-sm font-bold transition-all duration-300 flex items-center gap-2">
+                                    class="bg-[#1D1D1F] hover:bg-black text-white rounded-full px-6 py-3 text-sm font-bold flex items-center gap-2">
                                     <span>Notify Me</span>
                                 </button>
                             </div>
-                            <p id="formFeedback" class="text-green-600 text-xs font-bold mt-3 opacity-0 transition-opacity duration-300 transform translate-y-2">
+                            <p id="formFeedback" class="text-green-600 text-xs font-bold mt-3 opacity-0">
                                 You're on the list! 🚀
                             </p>
                         </form>
@@ -467,7 +434,6 @@
                 btn.classList.remove('bg-[#1D1D1F]');
                 btn.classList.add('bg-green-500');
                 feedback.style.opacity = '1';
-                feedback.style.transform = 'translateY(0)';
                 input.value = '';
                 
                 setTimeout(() => {
