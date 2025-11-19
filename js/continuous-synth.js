@@ -1,3 +1,5 @@
+import { getNearestScaleNote } from './core/music-scales.js';
+
 /**
  * Continuous Frequency Synthesizer Engine
  *
@@ -212,6 +214,9 @@ class ContinuousSynthEngine {
 
         // Auto-Tune 参数
         this.autoTuneStrength = 0.0; // 0.0 (Natural) -> 1.0 (Hard Tune)
+        this.retuneSpeed = 0.0;      // 0.0 (Fast/Robotic) -> 1.0 (Slow/Natural)
+        this.scaleKey = 'C';
+        this.scaleType = 'chromatic';
 
         console.log('[ContinuousSynth] ✓ Initialized with continuous frequency tracking');
         console.log('[ContinuousSynth] ✓ Expressive Features: cents, brightness, breathiness, articulation');
@@ -224,6 +229,26 @@ class ContinuousSynthEngine {
     setAutoTuneStrength(strength) {
         this.autoTuneStrength = Math.max(0, Math.min(1, strength));
         console.log(`[ContinuousSynth] 🔧 Auto-Tune Strength: ${(this.autoTuneStrength * 100).toFixed(0)}%`);
+    }
+
+    /**
+     * 设置调音速度 (Humanize)
+     * @param {number} speed - 0.0 (Robotic) ~ 1.0 (Natural)
+     */
+    setRetuneSpeed(speed) {
+        this.retuneSpeed = Math.max(0, Math.min(1, speed));
+        console.log(`[ContinuousSynth] 🔧 Retune Speed: ${(this.retuneSpeed * 100).toFixed(0)}%`);
+    }
+
+    /**
+     * 设置调式
+     * @param {string} key - 根音 (e.g., 'C', 'F#')
+     * @param {string} type - 调式类型 (e.g., 'major', 'minor')
+     */
+    setScale(key, type) {
+        this.scaleKey = key;
+        this.scaleType = type;
+        console.log(`[ContinuousSynth] 🎼 Scale Set: ${key} ${type}`);
     }
 
     /**
@@ -400,10 +425,10 @@ class ContinuousSynthEngine {
     }
 
     /**
-     * Task 1: 使用 cents 进行精细 pitch bend & Auto-Tune
+     * Task 1: 频率更新 (Auto-Tune & Smoothing)
      *
-     * @param {number} frequency - 基础频率 (Hz, Raw)
-     * @param {number} cents - 音分偏移 (Deviation from nearest note)
+     * @param {number} frequency - 基础频率 (Hz, Raw Input from Mic)
+     * @param {number} cents - 音分偏移 (未使用，由 getNearestScaleNote 重新计算)
      * @param {number} timestamp - 时间戳
      */
     updateFrequencyWithCents(frequency, cents, timestamp) {
@@ -412,26 +437,30 @@ class ContinuousSynthEngine {
             return;
         }
 
-        // Auto-Tune Logic:
-        // cents 是当前频率相对于最近半音的偏差 (例如 +20 cents)
-        // 如果 autoTuneStrength = 0: 不做修正，直接播放 raw frequency
-        // 如果 autoTuneStrength = 1: 完全修正，移除偏差 (correction = -20 cents)
-        // 混合: correction = -cents * strength
-        
-        const correctionCents = -(cents || 0) * this.autoTuneStrength;
-        const pitchBendRatio = Math.pow(2, correctionCents / 1200);
-        const targetFrequency = frequency * pitchBendRatio;
+        // 1. 计算目标音高 (Scale Quantization)
+        // 根据当前调式找到最近的合法音符
+        const { frequency: scaleFreq } = getNearestScaleNote(frequency, this.scaleKey, this.scaleType);
 
-        // 计算频率偏差 (相对于当前正在播放的频率)
-        const deviation = Math.abs(targetFrequency - this.currentFrequency) / this.currentFrequency;
+        // 2. 混合原始音高与目标音高 (Correction Strength)
+        // autoTuneStrength: 0.0 (完全原始) -> 1.0 (完全修正)
+        // 使用线性插值 (Lerp)
+        const targetFrequency = frequency + (scaleFreq - frequency) * this.autoTuneStrength;
 
-        // 只有明显变化才更新（避免抖动）
+        // 3. 计算平滑时间 (Retune Speed / Humanize)
+        // retuneSpeed: 0.0 (Robotic/Fast, 5ms) -> 1.0 (Natural/Slow, 100ms)
+        // 较慢的速度可以保留更多的滑音和颤音细节
+        const rampTime = 0.005 + (this.retuneSpeed * 0.1);
+
+        // 计算相对于当前振荡器频率的变化 (防抖)
+        const currentOscFreq = this.currentSynth.frequency.value; // 获取当前实际值
+        const deviation = Math.abs(targetFrequency - currentOscFreq) / currentOscFreq;
+
+        // 只有明显变化才更新（避免微小抖动）
         if (deviation > this.frequencyUpdateThreshold) {
             const startTime = performance.now();
 
-            // 🔥 [LATENCY FIX] 使用极短的 rampTo 代替直接赋值
-            // 0.01s (10ms) 的平滑既能避免爆音，又能保持低延迟
-            this.currentSynth.frequency.rampTo(targetFrequency, 0.01);
+            // 🔥 应用频率更新
+            this.currentSynth.frequency.rampTo(targetFrequency, rampTime);
 
             // 性能监控
             const latency = performance.now() - startTime;
@@ -444,9 +473,9 @@ class ContinuousSynthEngine {
             this.currentFrequency = targetFrequency;
             this.lastUpdateTime = timestamp;
 
-            // Debug 日志（仅在 cents 明显时）
-            if (Math.abs(correctionCents) > 10) {
-                // console.log(`[ContinuousSynth] 🔧 Auto-Tune: Raw ${frequency.toFixed(1)} -> Target ${targetFrequency.toFixed(1)} (Fix: ${correctionCents.toFixed(1)} cents)`);
+            // Debug (Log occasional large corrections)
+            if (this.autoTuneStrength > 0.5 && Math.abs(scaleFreq - frequency) > 5) {
+                // console.log(`[AutoTune] Raw: ${frequency.toFixed(1)} -> Scale: ${scaleFreq.toFixed(1)} (Strength: ${(this.autoTuneStrength*100).toFixed(0)}%)`);
             }
         }
     }

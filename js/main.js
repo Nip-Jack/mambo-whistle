@@ -87,7 +87,16 @@ class KazooApp {
             // Device Selection
             audioInputSelect: document.getElementById('audioInputSelect'),
             audioOutputSelect: document.getElementById('audioOutputSelect'),
-            refreshDevicesBtn: document.getElementById('refreshDevicesBtn')
+            refreshDevicesBtn: document.getElementById('refreshDevicesBtn'),
+
+            // Auto-Tune UI
+            autoTuneToggle: document.getElementById('autoTuneToggle'),
+            scaleKeySelect: document.getElementById('scaleKeySelect'),
+            scaleTypeSelect: document.getElementById('scaleTypeSelect'),
+            strengthSlider: document.getElementById('strengthSlider'),
+            speedSlider: document.getElementById('speedSlider'),
+            strengthValue: document.getElementById('strengthValue'),
+            speedValue: document.getElementById('speedValue')
         };
 
         // 可视化设置
@@ -151,6 +160,13 @@ class KazooApp {
         // Note: Without permission, labels might be empty or list incomplete
         this._refreshDeviceList();
 
+        // Initialize Auto-Tune UI State
+        if (this.ui.autoTuneToggle) {
+            // Default off
+            this.ui.autoTuneToggle.checked = false;
+            this._updateAutoTuneState();
+        }
+
         console.log('App initialized - Ready to play!');
     }
 
@@ -198,6 +214,52 @@ class KazooApp {
         if (this.ui.refreshDevicesBtn) {
             this.ui.refreshDevicesBtn.addEventListener('click', () => {
                 this._refreshDeviceList();
+            });
+        }
+
+        // Auto-Tune Controls
+        const updateAutoTune = () => this._updateAutoTuneState();
+
+        if (this.ui.autoTuneToggle) this.ui.autoTuneToggle.addEventListener('change', updateAutoTune);
+        
+        if (this.ui.scaleKeySelect) {
+            this.ui.scaleKeySelect.addEventListener('change', (e) => {
+                if (this.continuousSynthEngine) {
+                    this.continuousSynthEngine.setScale(e.target.value, this.ui.scaleTypeSelect.value);
+                }
+            });
+        }
+
+        if (this.ui.scaleTypeSelect) {
+            this.ui.scaleTypeSelect.addEventListener('change', (e) => {
+                if (this.continuousSynthEngine) {
+                    this.continuousSynthEngine.setScale(this.ui.scaleKeySelect.value, e.target.value);
+                }
+            });
+        }
+
+        if (this.ui.strengthSlider) {
+            this.ui.strengthSlider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                this.ui.strengthValue.textContent = `${val}%`;
+                updateAutoTune();
+            });
+        }
+
+        if (this.ui.speedSlider) {
+            this.ui.speedSlider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                let label = "Natural";
+                if (val < 20) label = "Robotic";
+                else if (val < 50) label = "Fast";
+                else if (val > 80) label = "Slow";
+                
+                this.ui.speedValue.textContent = `${val}ms (${label})`;
+                
+                if (this.continuousSynthEngine) {
+                    // Slider 0-100 -> Speed 0.0-1.0
+                    this.continuousSynthEngine.setRetuneSpeed(val / 100);
+                }
             });
         }
 
@@ -355,6 +417,27 @@ class KazooApp {
 
         } catch (error) {
             console.error('[Main] Failed to refresh devices:', error);
+        }
+    }
+
+    /**
+     * Update Auto-Tune State based on UI controls
+     */
+    _updateAutoTuneState() {
+        if (!this.continuousSynthEngine || !this.ui.autoTuneToggle) return;
+
+        const isEnabled = this.ui.autoTuneToggle.checked;
+        const sliderVal = parseInt(this.ui.strengthSlider.value);
+        
+        // If enabled, use slider value. If disabled, force 0.
+        const finalStrength = isEnabled ? (sliderVal / 100) : 0.0;
+        
+        this.continuousSynthEngine.setAutoTuneStrength(finalStrength);
+        
+        // Optional: Visually disable slider if toggle is off
+        if (this.ui.strengthSlider) {
+            this.ui.strengthSlider.disabled = !isEnabled;
+            this.ui.strengthSlider.style.opacity = isEnabled ? '1' : '0.5';
         }
     }
 
