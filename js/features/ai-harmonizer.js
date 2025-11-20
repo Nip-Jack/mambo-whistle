@@ -1,4 +1,5 @@
-import * as Tone from '../lib/tone.js';
+// Tone.js is loaded globally via <script>; stay resilient in non-browser envs (tests)
+const Tone = (typeof window !== 'undefined' && window.Tone) ? window.Tone : null;
 
 /**
  * AI Harmonizer using Google Magenta (MusicRNN)
@@ -32,6 +33,10 @@ export class AiHarmonizer {
 
         // Event listeners
         this.onStatusChange = null; // Callback for UI updates
+
+        if (!Tone) {
+            console.warn('[AI Harmonizer] Tone.js not available – AI mode disabled');
+        }
     }
 
     /**
@@ -39,6 +44,9 @@ export class AiHarmonizer {
      */
     async enable() {
         if (this.enabled) return;
+        if (!Tone) {
+            throw new Error('Tone.js not available – cannot enable AI Jam');
+        }
 
         try {
             this._updateStatus('loading', 'Loading Neural Net...');
@@ -55,8 +63,13 @@ export class AiHarmonizer {
                 await this.model.initialize();
             }
 
+            // Ensure AudioContext resumed after user gesture
+            if (Tone && Tone.context && Tone.context.state !== 'running' && typeof Tone.start === 'function') {
+                await Tone.start();
+            }
+
             // 3. Initialize Backing Synth (Simple Pad)
-            if (!this.backingSynth) {
+            if (!this.backingSynth && Tone) {
                 this.backingSynth = new Tone.PolySynth(Tone.Synth, {
                     oscillator: { type: "fatsawtooth", count: 3, spread: 30 },
                     envelope: { attack: 0.2, decay: 0.1, sustain: 0.5, release: 1 }
@@ -101,15 +114,21 @@ export class AiHarmonizer {
      * Main Process Loop (called by main.js)
      * @param {Object} pitchFrame - The detected pitch data
      */
-    processFrame(pitchFrame) {
+    processFrame(pitchFrame = {}) {
         if (!this.enabled || !this.model || this.status !== 'ready') return;
 
         const now = Date.now();
+        const clarity = typeof pitchFrame.confidence === 'number'
+            ? pitchFrame.confidence
+            : (pitchFrame.clarity ?? 0);
+        const frequency = typeof pitchFrame.frequency === 'number'
+            ? pitchFrame.frequency
+            : (pitchFrame.pitch ?? 0);
 
         // 1. Data Collection (Quantize & Buffer)
         // We only care about strong, clear notes for the AI
-        if (pitchFrame.clarity > 0.9 && pitchFrame.pitch > 0) {
-            this._addToBuffer(pitchFrame.pitch);
+        if (clarity > 0.9 && frequency > 0) {
+            this._addToBuffer(frequency);
         }
 
         // 2. Trigger Generation Logic
@@ -183,6 +202,10 @@ export class AiHarmonizer {
      * Play the generated notes using the local backing synth
      */
     _playBacking(notes) {
+        if (!Tone) {
+            return;
+        }
+
         const now = Tone.now();
         
         // Play each note in the sequence

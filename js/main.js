@@ -1634,7 +1634,8 @@ container.register('app', (c) => {
         performanceMonitor: c.get('performanceMonitor'),
         synthesizerEngine: c.get('synthesizerEngine'),
         continuousSynthEngine: c.get('continuousSynthEngine'),
-        ExpressiveFeatures: c.get('ExpressiveFeatures')
+        ExpressiveFeatures: c.get('ExpressiveFeatures'),
+        aiHarmonizer: c.get('aiHarmonizer')
     };
 
     console.log('[Container]  服务已注入:', Object.keys(services));
@@ -1642,7 +1643,8 @@ container.register('app', (c) => {
 }, {
     singleton: true,
     dependencies: ['config', 'configManager', 'pitchDetector', 'performanceMonitor',
-                   'synthesizerEngine', 'continuousSynthEngine', 'ExpressiveFeatures']
+                   'synthesizerEngine', 'continuousSynthEngine', 'ExpressiveFeatures',
+                   'aiHarmonizer']
 });
 
 // =============================================================================
