@@ -135,8 +135,16 @@
             from { transform: translateX(100%); }
             to { transform: translateX(0); }
         }
+
+        /* Google Font Helper */
+        .font-google {
+            font-family: 'Roboto Flex', 'Google Sans', 'Product Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
     </style>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] text-[#1D1D1F] min-h-screen relative">
@@ -756,10 +764,107 @@
                 </div>
 
                 <!-- Live Control -->
-                <div class="lg:col-span-5 flex flex-col" id="recordingSection">
-                    <!-- ... rest of the UI ... -->
+                <div class="lg:col-span-5 flex flex-col h-full" id="recordingSection">
+                    <div class="flex items-center justify-between mb-5 pl-1">
+                        <h2 class="text-xl font-semibold tracking-tight">Live Control</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span id="recordingStatus" class="text-[11px] font-bold text-apple-gray uppercase">Standby</span>
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-[32px] p-8 flex-1 flex flex-col justify-between relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-[80px]"></div>
+
+                        <div>
+                            <h3 class="text-3xl font-display font-bold text-apple-text mb-3">Start Session</h3>
+                            <p id="recordingHelper" class="text-sm text-apple-gray leading-relaxed max-w-[90%]">
+                                Ensure your microphone is connected. Use headphones to avoid feedback.
+                            </p>
+                        </div>
+
+                        <div class="mt-8 relative">
+                            <button id="startBtn" class="w-full h-14 bg-black hover:bg-gray-900 text-white text-[15px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-2 transform active:scale-[0.98] transition-transform">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                Start Engine
+                            </button>
+
+                            <button id="stopBtn" class="hidden w-full h-14 bg-red-500 hover:bg-red-600 text-white text-[15px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-2 transform active:scale-[0.98] transition-transform">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+                                Stop Session
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3 mt-4">
+                        <div class="glass rounded-2xl p-3 text-center">
+                            <div class="text-[9px] text-apple-gray uppercase font-bold tracking-wider mb-1">System</div>
+                            <div id="systemStatus" class="text-xs font-semibold truncate">Ready</div>
+                        </div>
+                        <div class="glass rounded-2xl p-3 text-center">
+                            <div class="text-[9px] text-apple-gray uppercase font-bold tracking-wider mb-1">Latency</div>
+                            <div id="latency" class="text-xs font-semibold">--</div>
+                        </div>
+                        <div class="glass rounded-2xl p-3 text-center">
+                            <div class="text-[9px] text-apple-gray uppercase font-bold tracking-wider mb-1">Conf.</div>
+                            <div id="confidence" class="text-xs font-semibold">--</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden elements required by main.js -->
+                    <div id="statusBar" class="hidden"></div>
+                    <div id="visualizer" class="hidden"><canvas id="pitchCanvas"></canvas><h2 id="currentNote"></h2><span id="currentFreq"></span></div>
+                    <div id="warningBox" class="hidden"></div><div id="warningText"></div>
+                    <button id="helpBtn" class="hidden"></button>
+                    <div id="tipsSection" class="hidden"></div><button id="helpToggle" class="hidden"></button><div id="helpContent"></div>
                 </div>
             </div>
+
+            <!-- NEW PROMO SECTION (Google Antigravity Style) -->
+            <section class="relative py-32 mt-12 overflow-hidden rounded-[40px] bg-white border border-gray-100 shadow-2xl text-center group font-google">
+                <!-- Confetti Background -->
+                <div class="absolute inset-0 pointer-events-none overflow-hidden" id="confetti-bg">
+                    <div class="absolute top-[15%] left-[10%] w-1.5 h-1.5 bg-blue-500/60 rounded-full"></div>
+                    <div class="absolute top-[35%] right-[20%] w-2 h-2 bg-red-500/60 rounded-full"></div>
+                    <div class="absolute bottom-[25%] left-[25%] w-1 h-1 bg-yellow-500/60 rounded-full"></div>
+                    <div class="absolute top-[50%] left-[50%] w-1.5 h-1.5 bg-green-500/60 rounded-full"></div>
+                    <div class="absolute bottom-[40%] right-[10%] w-2 h-2 bg-purple-500/60 rounded-full"></div>
+                </div>
+
+                <div class="relative z-10 max-w-4xl mx-auto px-6">
+                    <!-- Small Logo -->
+                    <div class="flex items-center justify-center gap-2 mb-8">
+                        <div class="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-[10px] text-white font-bold">K</div>
+                        <span class="font-medium text-lg text-gray-600 tracking-tight">Kazoo Proto Pro</span>
+                    </div>
+
+                    <!-- Headline -->
+                    <h2 class="text-5xl md:text-8xl font-bold tracking-tighter text-[#1D1D1F] mb-4 leading-[0.95]">
+                        Experience liftoff
+                    </h2>
+                    <p class="text-4xl md:text-7xl font-medium tracking-tighter text-[#86868b] mb-12 leading-[1.1]">
+                        with the next-generation IDE
+                    </p>
+
+                    <!-- Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <!-- Primary Button (Dark) -->
+                        <button class="flex items-center gap-3 bg-[#1D1D1F] text-white px-8 py-4 rounded-full font-medium text-lg hover:bg-black hover:scale-105 transition-all duration-300 shadow-lg">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.21-1.96 1.07-3.11-1.05.05-2.31.71-3.06 1.61-.69.87-1.23 2.02-1.01 3.15 1.2.09 2.32-.71 3-1.65"/></svg>
+                            Download for MacOS
+                        </button>
+
+                        <!-- Secondary Button (Light) -->
+                        <button class="flex items-center gap-3 bg-white text-[#1D1D1F] border border-gray-200 px-8 py-4 rounded-full font-medium text-lg hover:bg-gray-50 hover:border-gray-300 transition-all duration-300">
+                            Explore use cases
+                        </button>
+                    </div>
+                    
+                    <div class="mt-16 text-sm text-gray-400 font-medium">
+                        © 2025 Kazoo Proto. Runs locally in your browser.
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
