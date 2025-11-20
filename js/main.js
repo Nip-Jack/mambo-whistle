@@ -249,21 +249,44 @@ class KazooApp {
 
         // Device Selection
         if (this.ui.audioInputSelect) {
-            this.ui.audioInputSelect.addEventListener('change', (e) => {
+            this.ui.audioInputSelect.addEventListener('change', async (e) => {
                 this.selectedInputId = e.target.value;
                 console.log(`[Main] Input device selected: ${this.selectedInputId}`);
-                // If running, we might need to restart to apply change (simplest approach)
-                // For now, just update state for next start
+                
+                // If running, restart to apply new microphone
+                if (this.isRunning && this.audioIO) {
+                    console.log('[Main] Restarting audio to apply new input device...');
+                    // Visual feedback
+                    const originalText = this.ui.systemStatus.textContent;
+                    this.ui.systemStatus.textContent = 'Switching Mic...';
+                    
+                    try {
+                        await this.audioIO.stop();
+                        // Update config with new device ID
+                        this.audioIO.configure({ inputDeviceId: this.selectedInputId });
+                        await this.audioIO.start();
+                        console.log('[Main] Audio restarted with new input.');
+                        this.ui.systemStatus.textContent = originalText;
+                    } catch (err) {
+                        console.error('[Main] Failed to switch input:', err);
+                        this._showError('Failed to switch microphone: ' + err.message);
+                    }
+                }
             });
         }
 
         if (this.ui.audioOutputSelect) {
-            this.ui.audioOutputSelect.addEventListener('change', (e) => {
+            this.ui.audioOutputSelect.addEventListener('change', async (e) => {
                 this.selectedOutputId = e.target.value;
                 console.log(`[Main] Output device selected: ${this.selectedOutputId}`);
+                
                 // If running, update immediately
-                if (this.audioIO && this.isRunning) {
-                    this.audioIO.setAudioOutputDevice(this.selectedOutputId);
+                if (this.audioIO) {
+                    try {
+                        await this.audioIO.setAudioOutputDevice(this.selectedOutputId);
+                    } catch (err) {
+                        console.error('[Main] Failed to set output:', err);
+                    }
                 }
             });
         }

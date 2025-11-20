@@ -209,10 +209,10 @@ a:hover {
 .toggle-switch {
     position: relative;
     display: inline-block;
-    width: 44px;
-    height: 26px;
+    width: 51px;  /* Apple Standard Width */
+    height: 31px; /* Apple Standard Height */
     cursor: pointer;
-    flex-shrink: 0; /* Prevent squeezing in flex containers */
+    flex-shrink: 0;
 }
 
 .toggle-switch input {
@@ -224,31 +224,31 @@ a:hover {
 .toggle-slider {
     position: absolute;
     inset: 0;
-    background-color: rgba(17, 17, 17, 0.15);
-    border-radius: 999px;
-    transition: background 0.3s var(--apple-ease);
+    background-color: rgba(120, 120, 128, 0.16); /* Apple Gray */
+    border-radius: 31px;
+    transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .toggle-slider:before {
     content: "";
     position: absolute;
-    height: 22px;
-    width: 22px;
+    height: 27px; /* 31px - 4px padding */
+    width: 27px;
     left: 2px;
     bottom: 2px;
     background-color: #fff;
     border-radius: 50%;
-    transition: left 0.3s var(--apple-ease), box-shadow 0.3s var(--apple-ease);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
 }
 
 .toggle-switch input:checked + .toggle-slider {
-    background: linear-gradient(135deg, var(--apple-blue), #5e5ce6);
+    background: #34C759; /* Apple Green */
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
-    left: calc(100% - 24px); /* Robust positioning: 100% - width(22) - margin(2) */
-    box-shadow: 0 4px 10px rgba(94, 92, 230, 0.5);
+    transform: translateX(20px); /* 51px - 4px - 27px = 20px */
+    left: 2px; /* Keep left fixed, use transform */
 }
 
 /* Help Content Accordion */
