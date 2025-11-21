@@ -16,6 +16,7 @@ import instrumentPresetManager from './config/instrument-presets.js';
 import { ContinuousSynthEngine } from './continuous-synth.js'; // Fixed: Import class
 import { AiHarmonizer } from './features/ai-harmonizer.js';
 import { VisualizerManager } from './managers/visualizer-manager.js'; // Import the new visualizer manager
+import { SynthManager } from './managers/synth-manager.js'; // Import SynthManager
 import { AudioLoopController } from './core/audio-loop-controller.js'; // Import AudioLoopController
 
 class KazooApp {
@@ -31,6 +32,7 @@ class KazooApp {
      * @param {Object} services.aiHarmonizer - AI Harmonizer module
      * @param {Function} services.ExpressiveFeatures - Expressive features extraction class
      * @param {Object} services.visualizerManager - Visualizer manager module
+     * @param {Object} services.synthManager - Synth manager (bridge to engines)
      * @param {Object} services.audioLoopController - Audio loop controller
      */
     constructor(services = {}) {
@@ -46,6 +48,7 @@ class KazooApp {
         this.aiHarmonizer = services.aiHarmonizer || null;
         this.ExpressiveFeatures = services.ExpressiveFeatures || null;
         this.visualizerManager = services.visualizerManager || null;
+        this.synthManager = services.synthManager || null; // Injected SynthManager
         this.audioLoopController = services.audioLoopController || null; // Injected Controller
 
         // Audio System
@@ -1410,7 +1413,7 @@ container.register('visualizerManager', (c) => {
     if (!pitchCanvas) {
         console.warn('[Container] pitchCanvas element not found for VisualizerManager. Visualizer will not function.');
         // Return a no-op manager or throw error depending on desired behavior
-        return { init: () => {}, update: () => {}, resize: () => {}, destroy: () => {} }; 
+        return { init: () => {}, update: () => {}, resize: () => {}, destroy: () => {} };
     }
     return new VisualizerManager(pitchCanvas, config);
 }, {
@@ -1418,7 +1421,19 @@ container.register('visualizerManager', (c) => {
     dependencies: ['config']
 });
 
-// 8.7 Audio Loop Controller
+// 8.7 Synth Manager (Bridge between Store and Audio Engines)
+container.register('synthManager', (c) => {
+    console.log('[Container]  创建 SynthManager 实例...');
+    return new SynthManager({
+        continuous: c.get('continuousSynthEngine'),
+        legacy: c.get('synthesizerEngine')
+    });
+}, {
+    singleton: true,
+    dependencies: ['continuousSynthEngine', 'synthesizerEngine']
+});
+
+// 8.8 Audio Loop Controller
 container.register('audioLoopController', (c) => {
     console.log('[Container]  创建 AudioLoopController 实例...');
     return new AudioLoopController({
@@ -1449,16 +1464,17 @@ container.register('app', (c) => {
                     ExpressiveFeatures: c.get('ExpressiveFeatures'),
                     aiHarmonizer: c.get('aiHarmonizer'),
                     visualizerManager: c.get('visualizerManager'),
+                    synthManager: c.get('synthManager'), // Inject SynthManager
                     audioLoopController: c.get('audioLoopController') // Inject AudioLoopController
                 };
-            
+
                 console.log('[Container]  服务已注入:', Object.keys(services));
                 return new KazooApp(services);
             }, {
                 singleton: true,
                 dependencies: ['config', 'configManager', 'pitchDetector', 'performanceMonitor',
                                'synthesizerEngine', 'continuousSynthEngine', 'ExpressiveFeatures',
-                               'aiHarmonizer', 'visualizerManager', 'audioLoopController']
+                               'aiHarmonizer', 'visualizerManager', 'synthManager', 'audioLoopController']
             });// =============================================================================
 // 全局暴露 (仅保留应用入口和容器调试接口)
 // =============================================================================
