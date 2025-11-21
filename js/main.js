@@ -685,6 +685,55 @@ class KazooApp {
     }
 
     /**
+     * Populate a device select dropdown with devices
+     * @param {'input'|'output'} type - Device type (input or output)
+     * @param {Array} devices - Array of device objects
+     * @param {HTMLSelectElement} selectElement - The select element to populate
+     * @param {string} desiredValue - The value to restore if possible
+     * @param {string} lastKnownLabel - Label to show for disconnected device
+     * @private
+     */
+    _populateDeviceSelect(type, devices, selectElement, desiredValue, lastKnownLabel) {
+        if (!selectElement) return;
+
+        const isInput = type === 'input';
+        const deviceTypeName = isInput ? 'Microphone' : 'Speaker';
+        const defaultLabel = isInput ? 'Default Microphone' : 'Default Output';
+
+        // Clear existing options
+        selectElement.innerHTML = '';
+
+        // Add default option
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = 'default';
+        defaultOpt.textContent = defaultLabel;
+        selectElement.appendChild(defaultOpt);
+
+        // Add device options
+        devices.forEach((device, index) => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.textContent = device.label || `${deviceTypeName} ${index + 1}`;
+            selectElement.appendChild(option);
+        });
+
+        // Restore previous selection if possible
+        const hasMatchingOption = [...selectElement.options].some(opt => opt.value === desiredValue);
+
+        if (desiredValue && hasMatchingOption) {
+            selectElement.value = desiredValue;
+        } else if (desiredValue && desiredValue !== 'default') {
+            // Device disconnected - add ghost option
+            const ghostOption = document.createElement('option');
+            ghostOption.value = desiredValue;
+            ghostOption.textContent = `${lastKnownLabel || `Previous ${deviceTypeName}`} (disconnected)`;
+            ghostOption.disabled = true;
+            selectElement.appendChild(ghostOption);
+            selectElement.value = desiredValue;
+        }
+    }
+
+    /**
      * Refresh audio device list
      * Uses a temporary AudioIO instance to enumerate devices
      */
@@ -740,65 +789,24 @@ class KazooApp {
             }
             
             // Populate Inputs
-            if (this.ui.audioInputSelect) {
-                const desiredVal = this.selectedInputId || this.ui.audioInputSelect.value || 'default';
-                this.ui.audioInputSelect.innerHTML = '';
-                
-                // Add Default
-                const defaultOpt = document.createElement('option');
-                defaultOpt.value = 'default';
-                defaultOpt.textContent = 'Default Microphone';
-                this.ui.audioInputSelect.appendChild(defaultOpt);
-                
-                inputs.forEach((device, index) => {
-                    const option = document.createElement('option');
-                    option.value = device.deviceId;
-                    option.textContent = device.label || `Microphone ${index + 1}`;
-                    this.ui.audioInputSelect.appendChild(option);
-                });
-
-                // Restore selection if possible
-                if (desiredVal && [...this.ui.audioInputSelect.options].some(o => o.value === desiredVal)) {
-                    this.ui.audioInputSelect.value = desiredVal;
-                } else if (desiredVal && desiredVal !== 'default') {
-                    const ghostOption = document.createElement('option');
-                    ghostOption.value = desiredVal;
-                    ghostOption.textContent = `${this.lastKnownInputLabel || 'Previous Mic'} (disconnected)`;
-                    ghostOption.disabled = true;
-                    this.ui.audioInputSelect.appendChild(ghostOption);
-                    this.ui.audioInputSelect.value = desiredVal;
-                }
-            }
+            const desiredInputVal = this.selectedInputId || this.ui.audioInputSelect?.value || 'default';
+            this._populateDeviceSelect(
+                'input',
+                inputs,
+                this.ui.audioInputSelect,
+                desiredInputVal,
+                this.lastKnownInputLabel
+            );
 
             // Populate Outputs
-            if (this.ui.audioOutputSelect) {
-                const desiredVal = this.selectedOutputId || this.ui.audioOutputSelect.value || 'default';
-                this.ui.audioOutputSelect.innerHTML = '';
-                
-                const defaultOpt = document.createElement('option');
-                defaultOpt.value = 'default';
-                defaultOpt.textContent = 'Default Output';
-                this.ui.audioOutputSelect.appendChild(defaultOpt);
-                
-                outputs.forEach((device, index) => {
-                    const option = document.createElement('option');
-                    option.value = device.deviceId;
-                    option.textContent = device.label || `Speaker ${index + 1}`;
-                    this.ui.audioOutputSelect.appendChild(option);
-                });
-
-                // Restore selection if possible
-                if (desiredVal && [...this.ui.audioOutputSelect.options].some(o => o.value === desiredVal)) {
-                    this.ui.audioOutputSelect.value = desiredVal;
-                } else if (desiredVal && desiredVal !== 'default') {
-                    const ghostOption = document.createElement('option');
-                    ghostOption.value = desiredVal;
-                    ghostOption.textContent = `${this.lastKnownOutputLabel || 'Previous Output'} (disconnected)`;
-                    ghostOption.disabled = true;
-                    this.ui.audioOutputSelect.appendChild(ghostOption);
-                    this.ui.audioOutputSelect.value = desiredVal;
-                }
-            }
+            const desiredOutputVal = this.selectedOutputId || this.ui.audioOutputSelect?.value || 'default';
+            this._populateDeviceSelect(
+                'output',
+                outputs,
+                this.ui.audioOutputSelect,
+                desiredOutputVal,
+                this.lastKnownOutputLabel
+            );
 
             // Update button animation
             if (this.ui.refreshDevicesBtn) {
