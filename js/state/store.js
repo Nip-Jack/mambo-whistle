@@ -94,7 +94,7 @@ class StateStore {
 
     /**
      * Subscribe to state changes
-     * @param {Function} listener - Callback function receiving (newState, oldState)
+     * @param {(newState: AppState) => void} listener
      * @returns {Function} Unsubscribe function
      */
     subscribe(listener) {
@@ -138,6 +138,22 @@ class StateStore {
         if (kind === 'input') audioState.inputDeviceId = deviceId;
         if (kind === 'output') audioState.outputDeviceId = deviceId;
         this.setState({ audio: audioState });
+    }
+
+    /**
+     * Action: Update Reverb Wet Level
+     * @param {number} value - Reverb wet level (0.0 to 1.0)
+     */
+    setReverbWet(value) {
+        this.setState({ synth: { ...this.state.synth, reverbWet: value } });
+    }
+
+    /**
+     * Action: Update Delay Wet Level
+     * @param {number} value - Delay wet level (0.0 to 1.0)
+     */
+    setDelayWet(value) {
+        this.setState({ synth: { ...this.state.synth, delayWet: value } });
     }
 }
 

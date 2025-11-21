@@ -21,6 +21,7 @@ import { AudioLoopController } from './core/audio-loop-controller.js'; // Import
 import { TIMING_CONSTANTS } from './config/constants.js';
 import { store } from './state/store.js'; // Import StateStore singleton
 import { SafeUI } from './utils/safe-ui.js'; // Import SafeUI wrapper
+import { MamboView } from './ui/mambo-view.js'; // Import View Layer
 
 class MamboApp {
     /**
@@ -55,6 +56,9 @@ class MamboApp {
         this.synthManager = services.synthManager || null; // Injected SynthManager
         this.audioLoopController = services.audioLoopController || null; // Injected Controller
         this.store = services.store || null; // Injected State Store
+        
+        // View Layer
+        this.view = new MamboView(document);
 
         // Audio System
         // AudioIO is the only supported audio system (AudioWorklet + ScriptProcessor fallback)
@@ -266,8 +270,7 @@ class MamboApp {
         }
 
         // Start/Stop - Note: UIManager also binds these, check for double triggers
-        this.ui.startBtn.addEventListener('click', () => this.start());
-        this.ui.stopBtn.addEventListener('click', () => this.stop());
+        // Legacy Direct Binding Removed - Now handled by _setupTransportUI
 
         // Export Session
         if (this.ui.exportBtn) {
@@ -282,51 +285,48 @@ class MamboApp {
         this._setupSettingsUI();
         this._setupDeviceUI();
 
+        // Transport (Start/Stop/Mode) - State Driven
+        this._setupTransportUI();
+
         // Auto-Tune & Effects
         this._setupAutoTuneUI();
         this._setupEffectsUI();
 
-        //  模式切换
-        this.ui.modeToggle.addEventListener('change', (e) => {
-            if (this.isRunning) {
-                alert('Please stop playback before switching modes.');
-                e.target.checked = this.useContinuousMode;
-                return;
-            }
-            this.switchMode(e.target.checked);
-        });
-
-        // 乐器选择
-        this.ui.instrumentBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const instrument = e.currentTarget.dataset.instrument;
-                
-                // Update internal state (for when engine starts later)
-                this.selectedInstrument = instrument;
-
-                // 🔥 [ARCHITECTURE FIX] 视觉切换逻辑统一到 main.js，移除 HTML 内联重复代码
-                // 移除其他按钮的 active 类
-                this.ui.instrumentBtns.forEach(b => b.classList.remove('active'));
-                // 激活当前按钮（Google 彩色边框）
-                e.currentTarget.classList.add('active');
-
-                // 更新状态徽章 - 从 button 中提取乐器名称
-                const instrumentNameEl = e.currentTarget.querySelector('.font-semibold');
-                if (instrumentNameEl && this.ui.instrumentStatus) {
-                    this.ui.instrumentStatus.textContent = instrumentNameEl.textContent;
-                }
-
-                // 如果合成器已初始化，切换乐器（使用当前引擎）
-                if (this.currentEngine && this.currentEngine.currentSynth) {
-                    this.currentEngine.changeInstrument(instrument);
-                }
-            });
-        });
+        // Instruments (State-Driven)
+        this._setupInstrumentUI();
 
         // 帮助
         this._setupHelpUI();
         this._setupAiJamUI();
         this._setupKeyboardShortcuts();
+    }
+
+    /**
+     * Setup Instrument UI interactions (State-Driven)
+     * @private
+     */
+    _setupInstrumentUI() {
+        this.view.bindInstrumentUI({
+            onSelectInstrument: (instrumentId) => {
+                // 1. Update internal tracking (legacy support)
+                this.selectedInstrument = instrumentId;
+
+                // 2. Update Manager (Audio Engine)
+                if (this.synthManager) {
+                    this.synthManager.setInstrument(instrumentId);
+                } else if (this.currentEngine && this.currentEngine.changeInstrument) {
+                     // Fallback if SynthManager not ready (unlikely)
+                     this.currentEngine.changeInstrument(instrumentId);
+                }
+                
+                // 3. Update Store (Source of Truth)
+                // Note: SynthManager.setInstrument already updates store, 
+                // but good practice to ensure store is updated if manager isn't used.
+                if (this.store) {
+                    this.store.setInstrument(instrumentId);
+                }
+            }
+        });
     }
 
     /**
@@ -521,28 +521,64 @@ class MamboApp {
     }
 
     /**
-     * Setup Effects UI interactions
+     * Setup Transport UI interactions (State-Driven)
+     * @private
+     */
+    _setupTransportUI() {
+        // 1. Bind UI Events -> Controller Actions
+        this.view.bindTransportUI({
+            onStart: () => this.start(),
+            onStop: () => this.stop(),
+            onModeChange: (isContinuous) => {
+                if (this.isRunning) {
+                    alert('Please stop playback before switching modes.');
+                    // Revert toggle visually (store hasn't changed yet)
+                    // Actually, simply calling renderTransport with CURRENT state will revert it
+                    this.view.renderTransport(this.store.getState().status, this.store.getState().synth);
+                    return;
+                }
+                this.switchMode(isContinuous);
+            }
+        });
+
+        // Note: Subscription is handled centrally in _setupEffectsUI (or we can move it to a central `_setupSubscriptions` method later)
+        // For now, we'll piggyback on the existing subscription or ensure it covers this.
+    }
+
+    /**
+     * Setup Effects UI interactions (State-Driven)
      * @private
      */
     _setupEffectsUI() {
-        if (this.ui.reverbSlider) {
-            this.ui.reverbSlider.addEventListener('input', (e) => {
-                const val = parseInt(e.target.value);
-                if (this.ui.reverbValue) this.ui.reverbValue.textContent = `${val}%`;
-                if (this.synthManager) {
-                    this.synthManager.setReverb(val / 100);
-                }
-            });
-        }
+        // 1. Bind UI Events -> Controller Actions
+        this.view.bindEffectsUI({
+            onReverbChange: (percent) => {
+                const wet = percent / 100;
+                // Update Audio Engine
+                if (this.synthManager) this.synthManager.setReverb(wet);
+                // Update State (Source of Truth)
+                if (this.store) this.store.setReverbWet(wet);
+            },
+            onDelayChange: (percent) => {
+                const wet = percent / 100;
+                if (this.synthManager) this.synthManager.setDelay(wet);
+                if (this.store) this.store.setDelayWet(wet);
+            }
+        });
 
-        if (this.ui.delaySlider) {
-            this.ui.delaySlider.addEventListener('input', (e) => {
-                const val = parseInt(e.target.value);
-                if (this.ui.delayValue) this.ui.delayValue.textContent = `${val}%`;
-                if (this.synthManager) {
-                    this.synthManager.setDelay(val / 100);
-                }
+        // 2. Subscribe to State Changes -> UI Render
+        if (this.store) {
+            this.store.subscribe((newState) => {
+                this.view.renderEffects(newState.synth);
+                this.view.renderTransport(newState.status, newState.synth);
+                this.view.renderInstrument(newState.synth);
             });
+            
+            // 3. Initial Render
+            const state = this.store.getState();
+            this.view.renderEffects(state.synth);
+            this.view.renderTransport(state.status, state.synth);
+            this.view.renderInstrument(state.synth);
         }
     }
 
@@ -1018,8 +1054,7 @@ class MamboApp {
     _updateUIForStarted() {
         // Toggle visibility using SafeUI
         this.safeUI.batchUpdate({
-            startBtn: { hide: true },
-            stopBtn: { show: true },
+            // startBtn/stopBtn handled by State-Driven UI now
             statusBar: { show: true }
             // visualizer: { show: true } // Removed: Always visible
         });
@@ -1065,14 +1100,15 @@ class MamboApp {
      */
     _handleStartupError(error) {
         console.error('Failed to start:', error);
+        
+        // Update State: Error (This will reset buttons to Idle state usually, or Error state if implemented)
+        if (this.store) this.store.setEngineStatus('error');
 
         // Show user-friendly error
         this._showError(error.message || 'Startup failed. Check microphone permissions and browser compatibility.');
 
         // Reset UI state using SafeUI
         this.safeUI.batchUpdate({
-            startBtn: { show: true },
-            stopBtn: { hide: true },
             recordingStatus: {
                 setText: 'Error',
                 removeClass: 'status-ready',
@@ -1083,11 +1119,19 @@ class MamboApp {
 
     async start() {
         try {
+            // Update State: Starting
+            if (this.store) this.store.setEngineStatus('starting');
+
             console.log(`Starting Mambo Whistle in ${this.useContinuousMode ? 'Continuous' : 'Legacy'} mode...`);
 
             this._captureDeviceSelection();
             await this._initializeAudioSystem();
-            this._updateUIForStarted();
+            
+            // Update State: Running
+            this.isRunning = true; // Keep internal flag for now
+            if (this.store) this.store.setEngineStatus('running');
+
+            this._updateUIForStarted(); // Keep specific UI updates (visualizer resize etc) for now, but remove btn toggles
 
             console.log('✓ Mambo Whistle is running!');
 
@@ -1291,6 +1335,9 @@ class MamboApp {
     async stop() {
         console.log('Stopping Mambo Whistle...');
         this.isRunning = false;
+        
+        // Update State: Idle
+        if (this.store) this.store.setEngineStatus('idle');
 
         if (this.audioLoopController) {
             this.audioLoopController.stop();
@@ -1304,10 +1351,9 @@ class MamboApp {
             }
         }
 
-        // Reset UI using SafeUI
+        // Reset UI using SafeUI (Clean up non-transport UI elements)
         this.safeUI.batchUpdate({
-            startBtn: { show: true },
-            stopBtn: { hide: true },
+            // startBtn/stopBtn handled by State-Driven UI now
             statusBar: { hide: true },
             // visualizer: { hide: true }, // Removed: Always visible
             recordingStatus: {
