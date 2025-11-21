@@ -1500,7 +1500,7 @@ container.register('visualizerManager', (c) => {
 
 // 8.7 Synth Manager (Bridge between Store and Audio Engines)
 container.register('synthManager', (c) => {
-    console.log('[Container]  创建 SynthManager 实例...');
+    console.log('[Container] Creating SynthManager instance...');
     return new SynthManager({
         continuous: c.get('continuousSynthEngine'),
         legacy: c.get('synthesizerEngine')
@@ -1512,25 +1512,25 @@ container.register('synthManager', (c) => {
 
 // 8.8 Audio Loop Controller
 container.register('audioLoopController', (c) => {
-    console.log('[Container]  创建 AudioLoopController 实例...');
+    console.log('[Container] Creating AudioLoopController instance...');
     return new AudioLoopController({
         synthManager: c.get('synthManager'),
         visualizerManager: c.get('visualizerManager'),
         performanceMonitor: c.get('performanceMonitor'),
         pitchDetector: c.get('pitchDetector'),
         aiHarmonizer: c.get('aiHarmonizer')
-        // expressiveFeatures will be set by KazooApp after initialization
+        // expressiveFeatures will be set by MamboApp after initialization
     });
 }, {
     singleton: true,
     dependencies: ['synthManager', 'visualizerManager', 'performanceMonitor', 'pitchDetector', 'aiHarmonizer']
 });
 
-// 9. 主应用实例 (Step 2: 传入服务对象，实现依赖注入)
+// 9. Main App Instance (Step 2: Pass services for Dependency Injection)
 container.register('app', (c) => {
-    console.log('[Container]  创建 KazooApp 实例 (依赖注入)...');
+    console.log('[Container] Creating MamboApp instance (Dependency Injection)...');
 
-            // 收集所有依赖服务
+            // Collect all dependent services
         const services = {
             config: c.get('config'),
             configManager: c.get('configManager'),
@@ -1554,38 +1554,38 @@ container.register('app', (c) => {
                                'synthesizerEngine', 'continuousSynthEngine', 'ExpressiveFeatures',
                                'aiHarmonizer', 'visualizerManager', 'synthManager', 'audioLoopController', 'store']
             });// =============================================================================
-// 全局暴露 (仅保留应用入口和容器调试接口)
+// Global Exposure (App Entry & Container Debug Interface Only)
 // =============================================================================
-// Stage2 清理完成：移除所有中间服务的全局暴露
-// - 所有服务现在通过 window.container.get('serviceName') 访问
-// - 仅保留 window.app (应用入口) 和 window.container (调试接口)
+// Stage 2 Cleanup Complete: Removed global exposure of intermediate services
+// - All services are now accessed via window.container.get('serviceName')
+// - Only window.app (App Entry) and window.container (Debug Interface) are retained
 //
-// 调试示例:
+// Debug Examples:
 //   window.container.get('configManager')
 //   window.container.get('pitchDetector')
 //   window.container.get('performanceMonitor')
 //
 
-// 应用实例稍后创建 (DOMContentLoaded)
+// App instance created later (DOMContentLoaded)
 let app = null;
 
-// 暴露容器到全局 (唯一的服务访问入口)
+// Expose container globally (The only service access point)
 window.container = container;
 
-console.log('[Main]  依赖注入容器初始化完成');
-console.log('[Main]  已注册服务:', container.getServiceNames());
+console.log('[Main] Dependency Injection Container Initialized');
+console.log('[Main] Registered Services:', container.getServiceNames());
 
 // =============================================================================
-// 应用启动
+// Application Startup
 // =============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 从容器获取应用实例
+    // Get app instance from container
     app = container.get('app');
 
-    // 暴露到全局 (兼容性)
+    // Expose globally (Compatibility)
     window.app = app;
 
-    // 初始化应用
+    // Initialize application
     app.initialize();
 });

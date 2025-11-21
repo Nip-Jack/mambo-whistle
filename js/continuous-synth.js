@@ -52,7 +52,7 @@ export class ContinuousSynthEngine {
         this.minUpdateInterval = 10;  // Minimum update interval 10ms (avoid excessive triggering)
 
         // Confidence threshold (read from centralized config)
-        this.minConfidence = options.appConfig?.pitchDetector?.minConfidence ?? 0.05;
+        this.minConfidence = options.appConfig?.pitchDetector?.minConfidence ?? 0.05;  // Fixed: Read from config
 
         // Silence detection mechanism (prevent sound from continuing after humming stops)
         this.silenceTimeout = 300;  // Stop after 300ms without valid pitch
@@ -62,7 +62,7 @@ export class ContinuousSynthEngine {
         // Articulation state tracking
         this.lastArticulationState = 'silence';
 
-        // 效果器链
+        // Effect Chain
         this.vibrato = new Tone.Vibrato({
             frequency: 5,
             depth: 0.1
@@ -86,17 +86,17 @@ export class ContinuousSynthEngine {
             wet: 0.2
         }).toDestination();
 
-        //  噪声层 (用于 breathiness 特征)
-        //  延迟 start() 到 initialize()，避免 AudioContext 警告
+        // Noise Layer (for breathiness feature)
+        // Delay start() until initialize() to avoid AudioContext warnings
         this.noiseSource = new Tone.Noise('white');
-        this.noiseGain = new Tone.Gain(0); // 初始静音
+        this.noiseGain = new Tone.Gain(0); // Start muted
         this.noiseFilter = new Tone.Filter({
             type: 'bandpass',
             frequency: 1000,
             Q: 2
         });
 
-        // 连接效果器链
+        // Connect Effect Chain
         this.vibrato.connect(this.filter);
         this.filter.connect(this.delay);
         this.delay.connect(this.reverb);

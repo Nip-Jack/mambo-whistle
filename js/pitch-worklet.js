@@ -144,7 +144,7 @@ class FastFFT {
 }
 
 /**
- *  EMA 滤波器 (指数移动平均)
+ * EMA Filter (Exponential Moving Average)
  */
 class EMAFilter {
     constructor(alpha = 0.3) {
@@ -167,7 +167,7 @@ class EMAFilter {
 }
 
 /**
- *  简化起音检测器
+ * Simplified Onset Detector
  */
 class SimpleOnsetDetector {
     constructor(config = {}) {

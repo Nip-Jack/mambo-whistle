@@ -1,19 +1,19 @@
 /**
- * AudioIO 抽象层
+ * AudioIO Abstraction Layer
  *
- * 统一的音频输入/输出接口，支持：
- * - AudioWorklet (现代, 低延迟)
- * - ScriptProcessor (回退, 兼容性)
+ * Unified audio input/output interface supporting:
+ * - AudioWorklet (Modern, Low Latency)
+ * - ScriptProcessor (Fallback, Compatibility)
  *
- *  低延迟音频基础
- * 为 AudioWorklet 迁移提供清晰的抽象
+ * Low Latency Audio Foundation
+ * Provides clear abstraction for AudioWorklet migration
  *
  * @class AudioIO
  */
 
 class AudioIO {
     constructor() {
-        // 音频系统状态
+        // Audio System State
         this.audioContext = null;
         this.stream = null;
         this.sourceNode = null;
@@ -21,31 +21,31 @@ class AudioIO {
         this.isRunning = false;
         this.isInitialized = false;
 
-        // 当前使用的模式
+        // Current Mode
         this.mode = null; // 'worklet' | 'script-processor'
 
-        // 配置 (从 audio-config.js 或默认值)
+        // Configuration (from audio-config.js or defaults)
         this.config = {
             sampleRate: 44100,
-            bufferSize: 2048,        // ScriptProcessor 模式
-            workletBufferSize: 128,  // AudioWorklet 模式
-            useWorklet: true,        //  启用 AudioWorklet 低延迟模式
-            workletFallback: true,   // 自动回退到 ScriptProcessor
+            bufferSize: 2048,        // ScriptProcessor Mode
+            workletBufferSize: 128,  // AudioWorklet Mode
+            useWorklet: true,        // Enable AudioWorklet low latency mode
+            workletFallback: true,   // Auto fallback to ScriptProcessor
             latencyHint: 'interactive',
-            debug: false             // 调试模式
+            debug: false             // Debug Mode
         };
 
-        //  存储主线程的集中式配置 (用于序列化到 Worklet)
-        this.appConfig = null;  // 来自 configManager.get()
+        // Store centralized config from main thread (for serialization to Worklet)
+        this.appConfig = null;  // From configManager.get()
 
-        // 回调函数
-        this.onFrameCallback = null;           // 原始音频帧回调 (所有模式)
-        this.onPitchDetectedCallback = null;   // 音高检测回调 (仅 Worklet 模式)
-        this.onWorkletPitchFrameCallback = null; //  Worklet PitchFrame 专用回调
+        // Callbacks
+        this.onFrameCallback = null;           // Raw audio frame callback (all modes)
+        this.onPitchDetectedCallback = null;   // Pitch detection callback (Worklet mode only)
+        this.onWorkletPitchFrameCallback = null; // Worklet PitchFrame dedicated callback
         this.onErrorCallback = null;
         this.onStateChangeCallback = null;
 
-        // 性能监控
+        // Performance Monitoring
         this.stats = {
             framesProcessed: 0,
             lastFrameTime: 0,

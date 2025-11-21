@@ -1,51 +1,51 @@
 /**
  * MAMBO Web - Centralized Configuration Management
  *
- * 基于现代软件工程最佳实践:
- * - Single Source of Truth (单一数据源)
- * - Type Safety (类型安全)
- * - Immutability (不可变性)
- * - Validation (运行时验证)
- * - Documentation (完整文档化)
+ * Based on modern software engineering best practices:
+ * - Single Source of Truth
+ * - Type Safety
+ * - Immutability
+ * - Validation (Runtime validation)
+ * - Documentation
  *
  * @module AppConfig
  * @version 0.3.0
- * @see {@link docs/CONFIGURATION.md} 完整配置文档
+ * @see {@link docs/CONFIGURATION.md} Full Configuration Documentation
  */
 
 /**
  * @typedef {Object} AudioEngineConfig
- * @property {number} sampleRate - 采样率 (Hz), 影响: 质量↑/CPU↑/延迟↓
- * @property {number} bufferSize - 缓冲区大小 (samples) for ScriptProcessor, 影响: 延迟↓/稳定性↓/CPU↑
- * @property {number} workletBufferSize - Worklet 缓冲区大小 (固定 128 样本)
- * @property {boolean} useWorklet - 使用 AudioWorklet (true) 或 ScriptProcessor (false)
+ * @property {number} sampleRate - Sample Rate (Hz), Impacts: Quality↑/CPU↑/Latency↓
+ * @property {number} bufferSize - Buffer Size (samples) for ScriptProcessor, Impacts: Latency↓/Stability↓/CPU↑
+ * @property {number} workletBufferSize - Worklet Buffer Size (Fixed 128 samples)
+ * @property {boolean} useWorklet - Use AudioWorklet (true) or ScriptProcessor (false)
  */
 
 /**
  * @typedef {Object} PitchDetectorConfig
- * @property {number} clarityThreshold - YIN 清晰度阈值 (0-1), 影响: 灵敏度↑/误检↑
- * @property {number} minFrequency - 最低检测频率 (Hz), 影响: 检测范围/CPU
- * @property {number} maxFrequency - 最高检测频率 (Hz), 影响: 检测范围/CPU
+ * @property {number} clarityThreshold - YIN Clarity Threshold (0-1), Impacts: Sensitivity↑/False Positives↑
+ * @property {number} minFrequency - Min Detection Frequency (Hz), Impacts: Range/CPU
+ * @property {number} maxFrequency - Max Detection Frequency (Hz), Impacts: Range/CPU
  */
 
 /**
  * @typedef {Object} KalmanFilterConfig
- * @property {number} processNoise - 过程噪声 (Q), 影响: 响应速度↑/平滑度↓
- * @property {number} measurementNoise - 测量噪声 (R), 影响: 平滑强度↑
- * @property {number} initialEstimate - 初始估计值
- * @property {number} initialError - 初始误差协方差
+ * @property {number} processNoise - Process Noise (Q), Impacts: Responsiveness↑/Smoothness↓
+ * @property {number} measurementNoise - Measurement Noise (R), Impacts: Smoothing Strength↑
+ * @property {number} initialEstimate - Initial Estimate Value
+ * @property {number} initialError - Initial Error Covariance
  */
 
 /**
  * @typedef {Object} EMAFilterConfig
- * @property {number} alpha - 平滑系数 (0-1), 影响: 响应速度↑/平滑度↓
+ * @property {number} alpha - Smoothing Factor (0-1), Impacts: Responsiveness↑/Smoothness↓
  */
 
 /**
  * @typedef {Object} SmoothingConfig
- * @property {KalmanFilterConfig} kalman - Kalman 滤波器 (cents 平滑)
- * @property {EMAFilterConfig} volume - EMA 滤波器 (音量平滑)
- * @property {EMAFilterConfig} brightness - EMA 滤波器 (亮度平滑)
+ * @property {KalmanFilterConfig} kalman - Kalman Filter (cents smoothing)
+ * @property {EMAFilterConfig} volume - EMA Filter (volume smoothing)
+ * @property {EMAFilterConfig} brightness - EMA Filter (brightness smoothing)
  */
 
 /**
