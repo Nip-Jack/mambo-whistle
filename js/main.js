@@ -1020,20 +1020,9 @@ class MamboApp {
         this.safeUI.batchUpdate({
             startBtn: { hide: true },
             stopBtn: { show: true },
-            statusBar: { show: true },
-            visualizer: { show: true }
+            statusBar: { show: true }
+            // visualizer: { show: true } // Removed: Always visible
         });
-
-        // Trigger smooth entry animation for visualizer
-        if (this.ui.visualizer) {
-            // Double rAF to ensure browser paints the display:block state first
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    this.ui.visualizer.classList.remove('opacity-0', 'translate-y-4');
-                    this.ui.visualizer.classList.add('translate-y-0', 'opacity-100');
-                });
-            });
-        }
 
         // Force visualizer resize to prevent blank canvas
         requestAnimationFrame(() => {
@@ -1320,7 +1309,7 @@ class MamboApp {
             startBtn: { show: true },
             stopBtn: { hide: true },
             statusBar: { hide: true },
-            visualizer: { hide: true },
+            // visualizer: { hide: true }, // Removed: Always visible
             recordingStatus: {
                 setText: 'Standby',
                 removeClass: ['status-ready', 'status-error']
@@ -1330,7 +1319,7 @@ class MamboApp {
                 removeClass: 'active'
             },
             recordingHelper: {
-                setText: 'Ensure your microphone is connected. Use headphones to avoid feedback.'
+                setText: 'Use headphones. Wired microphones recommended over Bluetooth for best latency.'
             }
         });
 

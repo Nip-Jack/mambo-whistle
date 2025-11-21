@@ -746,7 +746,7 @@
                         <div>
                             <h3 class="text-3xl font-display font-bold text-apple-text mb-3">Start Session</h3>
                             <p id="recordingHelper" class="text-sm text-apple-gray leading-relaxed max-w-[90%]">
-                                Ensure your microphone is connected. Use headphones to avoid feedback.
+                                Use headphones. Wired microphones recommended over Bluetooth for best latency.
                             </p>
                         </div>
 
@@ -803,7 +803,7 @@
             <div id="statusBar" class="hidden"></div>
 
             <!-- Visualizer (Pro Audio Style) -->
-            <div id="visualizer" class="hidden mb-16 transition-all duration-700 ease-out transform translate-y-4 opacity-0" data-active-class="translate-y-0 opacity-100">
+            <div id="visualizer" class="mb-16 transition-all duration-700 ease-out transform translate-y-0 opacity-100" data-active-class="translate-y-0 opacity-100">
                 <div class="bg-[#050505] rounded-[24px] p-1 shadow-2xl ring-1 ring-black/5 relative overflow-hidden">
                     <!-- Screen Glare -->
                     <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none z-10"></div>
@@ -850,8 +850,11 @@
                 <div id="helpContent" class="grid md:grid-cols-3 gap-6">
                     <div class="glass p-6 rounded-[24px]">
                         <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm mb-3 font-bold">1</div>
-                        <h3 class="font-semibold text-[#1D1D1F] mb-2">Audio Environment</h3>
-                        <p class="text-xs text-apple-gray leading-relaxed">Use headphones. The microphone will pick up the speakers if you don't.</p>
+                        <h3 class="font-semibold text-[#1D1D1F] mb-2">Audio Setup</h3>
+                        <p class="text-xs text-apple-gray leading-relaxed">
+                            <strong>Heaphones required</strong> to avoid feedback. <br>
+                            For lowest latency, use a <strong>wired mic</strong> or built-in microphone. Bluetooth devices often cause noticeable lag.
+                        </p>
                     </div>
                     <div class="glass p-6 rounded-[24px]">
                         <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-sm mb-3 font-bold">2</div>
