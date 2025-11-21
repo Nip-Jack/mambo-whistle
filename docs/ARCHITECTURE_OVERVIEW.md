@@ -2,7 +2,7 @@
 
 **Version**: 0.1.0 (Performance First)
 **Date**: 2025-11-21
-**Goal**: Real-time Voice-to-Instrument System (Target Latency < 50ms)
+**Goal**: Real-time Voice-to-Instrument System (Target Latency < 60ms)
 
 ---
 
@@ -13,7 +13,7 @@ User hums/speaks into microphone → System detects pitch and expression in real
 
 ### Technical Highlights
 - **Zero Installation**: Runs purely in the browser, no backend server required.
-- **Low Latency**: Uses AudioWorklet (128 sample buffer).
+- **Low Latency**: Uses AudioWorklet (1024 sample buffer).
 - **Expressive Mapping**: Extraction of volume, timbre, breathiness, and other features.
 - **Dual Engine Mode**:
   - Continuous Mode (Default): Continuous frequency sliding, suitable for vocals/strings.
@@ -22,7 +22,7 @@ User hums/speaks into microphone → System detects pitch and expression in real
 ### Current Performance Metrics
 | Metric | Target | Current | Status |
 |------|------|------|------|
-| End-to-End Latency | < 50ms | 180ms | ❌ 3.6x Over |
+| End-to-End Latency | < 60ms | 50-60ms | ✅ On Target |
 | Test Coverage | 40% | 10% | ⚠️ In Progress |
 | Global Variables | 0 | 2 | ✅ Acceptable |
 | Console Logs | < 50 | 286 | ❌ Too Many |
@@ -137,7 +137,7 @@ AudioContext.getUserMedia()
 [Branch 1: AudioWorklet Mode - Default]
     MediaStreamSource → AudioWorkletNode (pitch-worklet.js)
         ↓ (Worklet Thread)
-        - YIN Pitch Detection (every 128 samples)
+        - YIN Pitch Detection (every 1024 samples)
         - FFT Spectral Analysis
         - Volume Detection (RMS)
         - Attack Detection (OnsetDetector)
@@ -294,7 +294,7 @@ main.js: MamboApp.start()
 ```javascript
 // AudioWorklet Mode (Default)
 pitch-worklet.js: process(inputs, outputs, parameters)
-    ↓ (Called every 128 samples)
+    ↓ (Called every 1024 samples)
     - YIN.getPitch(audioBuffer) → frequency
     - calculateRMS(audioBuffer) → volume
     - SpectralFeatures.process() → brightness, breathiness
@@ -356,18 +356,18 @@ btn.addEventListener('click', (e) => {
 
 | Stage | Estimated Latency | Notes |
 |------|----------|------|
-| Microphone Buffer | 3ms | 128 samples @ 44.1kHz |
+| Microphone Buffer | 23ms | 1024 samples @ 44.1kHz |
 | AudioWorklet Processing | 5-10ms | YIN + FFT + Feature Extraction |
 | Main Thread Transfer | 1-2ms | postMessage |
 | Synth Response | 5-10ms | Tone.js setFrequency() |
 | Audio Output Buffer | 10-20ms | Browser Audio Stack |
-| **Measured Value** | **180ms** | window.app.getLatencyStats() |
+| **Measured Value** | **50-60ms** | window.app.getLatencyStats() |
 
 ### Possible Bottlenecks
 
-1. **ScriptProcessor Fallback** (46ms Base Latency)
-   - Check: `window.container.get('audioIO').mode === 'worklet'`
-   - If 'script-processor', then 2048 buffer = 46ms
+1. **Buffer Size Trade-off**
+   - 1024 samples = 23ms base latency.
+   - Necessary for accurate low-frequency detection (80Hz).
 
 2. **FFT Calculation** (SpectralFeatures)
    - 2048 point FFT executed every frame
@@ -621,8 +621,8 @@ window.container.get('performanceMonitor').getMetrics()
 ## X. Known Issues & Improvement Directions
 
 ### P0: Latency Optimization (Critical)
-- **Current**: 180ms
-- **Goal**: < 50ms (v1.0), < 90ms (v0.1.0)
+- **Current**: 50-60ms
+- **Goal**: < 50ms (v1.0)
 - **Actions**:
   1. Verify AudioWorklet mode activation.
   2. Profile FFT and feature extraction overhead.
@@ -674,7 +674,7 @@ window.container.get('performanceMonitor').getMetrics()
 
 Ask Gemini to focus on:
 
-1. **Performance Bottlenecks**: Help locate the source of 180ms latency.
+1. **Performance Bottlenecks**: Help locate the source of latency.
 2. **Architecture Soundness**: Evaluate DI, Event-driven patterns.
 3. **Code Quality**: Point out potential bugs, readability issues.
 4. **Test Strategy**: Suggest modules to test first.

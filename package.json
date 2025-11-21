@@ -30,7 +30,7 @@
     "synthesizer"
   ],
   "author": "Ziming Wang",
-  "license": "MIT",
+  "license": "Proprietary",
   "dependencies": {
     "pitchfinder": "^2.3.2",
     "tone": "^15.1.22"

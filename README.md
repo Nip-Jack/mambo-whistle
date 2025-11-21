@@ -24,13 +24,13 @@
 
 ## 🚀 Introduction
 
-**MAMBO** (formerly Kazoo Proto) is a high-performance web application that leverages the Web Audio API to transform vocal input into synthesized instrument sounds in real-time. Unlike traditional pitch-to-MIDI converters, MAMBO uses a custom DSP pipeline running on `AudioWorklet` to ensure sub-20ms latency, preserving the nuanced expression of the human voice including vibrato, slides, and dynamics.
+**MAMBO** (formerly Kazoo Proto) is a high-performance web application that leverages the Web Audio API to transform vocal input into synthesized instrument sounds in real-time. Unlike traditional pitch-to-MIDI converters, MAMBO uses a custom DSP pipeline running on `AudioWorklet` to ensure low latency (~50-60ms), preserving the nuanced expression of the human voice including vibrato, slides, and dynamics.
 
 Whether you want to sound like a saxophone, a violin, or a futuristic synthesizer, MAMBO provides an immersive, "liquid" playing experience that feels like a real instrument.
 
 ## ✨ Key Features
 
--   **Zero-Latency Core**: Built on `AudioWorklet` with a custom ring-buffer architecture to decouple audio processing from the main thread, achieving <20ms end-to-end latency.
+-   **Low-Latency Core**: Built on `AudioWorklet` with a custom ring-buffer architecture to decouple audio processing from the main thread, achieving ~50-60ms end-to-end latency.
 -   **Dual Engine Architecture**:
     -   **Continuous Mode**: Tracks precise frequency changes for smooth slides and vibrato (Portamento / Glissando).
     -   **Legacy Mode**: Quantizes pitch to the nearest semitone for a classic keyboard/sampler feel.
