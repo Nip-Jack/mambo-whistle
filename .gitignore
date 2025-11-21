@@ -10,3 +10,9 @@ coverage/
 .vitest/
 yarn.lock
 .gemini/
+.claude/
+.specify/
+CLAUDE.md
+GEMINI.md
+PROJECT_STATUS.md
+.cursorrules
