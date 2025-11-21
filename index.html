@@ -213,10 +213,16 @@
             </div>
 
             <div class="flex items-center gap-3">
+                <!-- System Status Badge -->
+                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white/85 backdrop-blur-sm rounded-full border border-black/5 shadow-sm">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span id="systemStatus" class="text-[10px] font-semibold text-gray-700">Ready</span>
+                </div>
+
                 <!-- Smart Jam Button (Apple Style) -->
                 <div class="relative group/tooltip">
                     <button id="aiJamBtn" class="group relative flex items-center gap-2.5 bg-white/85 hover:bg-white active:bg-gray-50 backdrop-blur-sm border border-black/5 shadow-sm pr-4 pl-3 py-1.5 rounded-full transition-all duration-300 overflow-hidden" style="min-width: 120px;">
-                        
+
                         <!-- Loading Progress Bar (Absolute Background) -->
                         <div id="aiProgressBar" class="absolute left-0 top-0 bottom-0 bg-blue-500/10 w-0 transition-all duration-300 ease-out"></div>
 
@@ -226,13 +232,13 @@
                             <svg id="aiIconIdle" class="w-4.5 h-4.5 text-blue-500 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                             </svg>
-                            
+
                             <!-- Loading Icon: Spinner -->
                             <svg id="aiIconLoading" class="hidden w-4.5 h-4.5 animate-spin text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            
+
                             <!-- Active Icon: Audio Wave -->
                             <svg id="aiIconActive" class="hidden w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
@@ -255,10 +261,21 @@
                     </div>
                 </div>
 
-                <!-- Settings Button -->
-                <button id="settingsBtn" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-200 hover:bg-gray-50 transition-all hover:scale-105 active:scale-95">
-                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                </button>
+                <!-- Settings Button with Text Guide -->
+                <div class="relative group/settings">
+                    <button id="settingsBtn" class="flex items-center gap-2.5 bg-white/85 hover:bg-white active:bg-gray-50 backdrop-blur-sm border border-black/5 shadow-sm px-4 py-1.5 rounded-full transition-all duration-300 hover:scale-105 active:scale-95">
+                        <svg class="w-5 h-5 text-gray-600 group-hover/settings:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span class="text-[11px] font-semibold text-gray-900">Settings</span>
+                    </button>
+
+                    <!-- Tooltip for Settings -->
+                    <div class="absolute top-full right-0 mt-3 w-56 p-3 bg-white/95 backdrop-blur-sm rounded-2xl border border-black/5 shadow-xl opacity-0 invisible group-hover/settings:opacity-100 group-hover/settings:visible transition-all duration-200 z-[60] transform translate-y-2 group-hover/settings:translate-y-0">
+                        <div class="text-[11px] text-gray-500 leading-relaxed">
+                            <span class="font-semibold text-gray-900 block mb-1">Configure Audio</span>
+                            Adjust synthesis mode, auto-tune, device selection, and effects.
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -733,38 +750,52 @@
                             </p>
                         </div>
 
-                        <div class="mt-8 relative">
-                            <!-- 修复核心：
-                                 stopBtn 必须在 HTML 中显式拥有 "hidden" 类。
-                                 如果 JS 使用 toggle('hidden') 或 remove('hidden')，
-                                 初始状态必须正确，否则会 crash 或显示双按钮。
-                            -->
-                            <button id="startBtn" class="w-full h-14 bg-black hover:bg-gray-900 text-white text-[15px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-2 transform active:scale-[0.98] transition-transform">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                Start Engine
+                        <div class="mt-8 relative space-y-3">
+                            <!-- Start Engine Button - Modern Gradient Design -->
+                            <button id="startBtn" class="group relative w-full h-16 overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                                <!-- Gradient Background with Animation -->
+                                <div class="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-[length:200%_100%] group-hover:bg-[position:100%_0] transition-all duration-700"></div>
+
+                                <!-- Shine Effect on Hover -->
+                                <div class="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                                </div>
+
+                                <!-- Button Content -->
+                                <div class="relative flex items-center justify-center gap-3 h-full">
+                                    <!-- Play Icon with Pulse -->
+                                    <div class="relative">
+                                        <div class="absolute inset-0 bg-white/30 rounded-full animate-ping"></div>
+                                        <svg class="relative w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-white text-base font-bold tracking-wide">Start Engine</span>
+                                </div>
                             </button>
 
-                            <button id="stopBtn" class="hidden w-full h-14 bg-red-500 hover:bg-red-600 text-white text-[15px] font-semibold rounded-full shadow-lg flex items-center justify-center gap-2 transform active:scale-[0.98] transition-transform">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
-                                Stop Session
+                            <!-- Stop Session Button - Elegant Danger Design -->
+                            <button id="stopBtn" class="hidden group relative w-full h-16 overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                                <!-- Dark Red Background -->
+                                <div class="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 to-red-600 bg-[length:200%_100%] group-hover:bg-[position:100%_0] transition-all duration-700"></div>
+
+                                <!-- Glow Effect -->
+                                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.3)]"></div>
+                                </div>
+
+                                <!-- Button Content -->
+                                <div class="relative flex items-center justify-center gap-3 h-full">
+                                    <!-- Stop Icon -->
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <rect x="6" y="6" width="12" height="12" rx="2"/>
+                                    </svg>
+                                    <span class="text-white text-base font-bold tracking-wide">Stop Session</span>
+                                </div>
                             </button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-3 mt-4">
-                        <div class="glass rounded-2xl p-3 text-center">
-                            <div class="text-[9px] text-apple-gray uppercase font-bold tracking-wider mb-1">System</div>
-                            <div id="systemStatus" class="text-xs font-semibold truncate">Ready</div>
-                        </div>
-                        <div class="glass rounded-2xl p-3 text-center">
-                            <div class="text-[9px] text-apple-gray uppercase font-bold tracking-wider mb-1">Latency</div>
-                            <div id="latency" class="text-xs font-semibold">--</div>
-                        </div>
-                        <div class="glass rounded-2xl p-3 text-center">
-                            <div class="text-[9px] text-apple-gray uppercase font-bold tracking-wider mb-1">Conf.</div>
-                            <div id="confidence" class="text-xs font-semibold">--</div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -786,14 +817,14 @@
                                 <span id="currentFreq" class="text-sm text-gray-500 font-mono mt-2">Waiting for audio...</span>
                             </div>
                             
-                            <div class="mt-8 flex gap-4">
+                            <div class="mt-8 flex gap-6">
                                 <div>
                                     <div class="text-[9px] text-gray-600 uppercase tracking-wider font-bold mb-1">Confidence</div>
-                                    <div id="confidence" class="text-xs font-mono text-green-400">--</div>
+                                    <div id="visualizerConfidence" class="text-sm font-mono text-green-400 font-semibold">--</div>
                                 </div>
                                 <div>
                                     <div class="text-[9px] text-gray-600 uppercase tracking-wider font-bold mb-1">Latency</div>
-                                    <div id="latency" class="text-xs font-mono text-blue-400">--</div>
+                                    <div id="visualizerLatency" class="text-sm font-mono text-blue-400 font-semibold">--</div>
                                 </div>
                             </div>
                         </div>

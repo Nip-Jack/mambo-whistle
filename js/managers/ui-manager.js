@@ -150,8 +150,10 @@ export class UIManager {
     // 状态显示
     this.elements.recordingStatus = document.getElementById('recordingStatus');
     this.elements.systemStatus = document.getElementById('systemStatus');
-    this.elements.latency = document.getElementById('latency');
-    this.elements.confidence = document.getElementById('confidence');
+
+    // Visualizer 专用指标 (canvas panel 内部)
+    this.elements.visualizerLatency = document.getElementById('visualizerLatency');
+    this.elements.visualizerConfidence = document.getElementById('visualizerConfidence');
 
     // 音高显示
     this.elements.noteDisplay = document.getElementById('note-display');
@@ -335,24 +337,24 @@ export class UIManager {
   }
 
   /**
-   * 更新置信度显示
+   * 更新置信度显示 (仅在 Visualizer 内部)
    *
    * @param {number} confidence - 置信度 (0-1)
    */
   updateConfidence(confidence) {
-    if (this.elements.confidence) {
-      this.elements.confidence.textContent = (confidence * 100).toFixed(0) + '%';
+    if (this.elements.visualizerConfidence) {
+      this.elements.visualizerConfidence.textContent = (confidence * 100).toFixed(0) + '%';
     }
   }
 
   /**
-   * 更新延迟显示
+   * 更新延迟显示 (仅在 Visualizer 内部)
    *
    * @param {number} latency - 延迟 (ms)
    */
   updateLatency(latency) {
-    if (this.elements.latency) {
-      this.elements.latency.textContent = `${latency.toFixed(1)}ms`;
+    if (this.elements.visualizerLatency) {
+      this.elements.visualizerLatency.textContent = `${latency.toFixed(1)}ms`;
     }
 
     this.state.latency = latency;

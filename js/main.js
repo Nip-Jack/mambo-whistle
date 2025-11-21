@@ -102,10 +102,12 @@ class MamboApp {
             statusBar: document.getElementById('statusBar'),
             visualizer: document.getElementById('visualizer'),
             systemStatus: document.getElementById('systemStatus'),
-            latency: document.getElementById('latency'),
-            confidence: document.getElementById('confidence'),
             currentNote: document.getElementById('currentNote'),
             currentFreq: document.getElementById('currentFreq'),
+
+            // Visualizer-specific metrics (inside canvas panel)
+            visualizerLatency: document.getElementById('visualizerLatency'),
+            visualizerConfidence: document.getElementById('visualizerConfidence'),
 
             // Instrument Buttons
             instrumentBtns: document.querySelectorAll('.instrument-btn'),
@@ -249,14 +251,14 @@ class MamboApp {
         if (this.audioLoopController) {
             this.audioLoopController.onStatsUpdate = (stats) => {
                 const { pitchFrame, latency } = stats;
-                
-                // Update Pitch Info
+
+                // Update Pitch Info (in visualizer)
                 if (this.ui.currentNote) this.ui.currentNote.textContent = `${pitchFrame.note}${pitchFrame.octave}`;
                 if (this.ui.currentFreq) this.ui.currentFreq.textContent = `${pitchFrame.frequency.toFixed(1)} Hz`;
-                if (this.ui.confidence) this.ui.confidence.textContent = `${Math.round(pitchFrame.confidence * 100)}%`;
-                
-                // Update Latency
-                if (this.ui.latency) this.ui.latency.textContent = `${latency}ms`;
+
+                // Update Visualizer Metrics (inside canvas panel)
+                if (this.ui.visualizerConfidence) this.ui.visualizerConfidence.textContent = `${Math.round(pitchFrame.confidence * 100)}%`;
+                if (this.ui.visualizerLatency) this.ui.visualizerLatency.textContent = `${latency}ms`;
             };
         }
 
