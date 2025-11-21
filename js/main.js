@@ -20,6 +20,7 @@ import { SynthManager } from './managers/synth-manager.js'; // Import SynthManag
 import { AudioLoopController } from './core/audio-loop-controller.js'; // Import AudioLoopController
 import { TIMING_CONSTANTS } from './config/constants.js';
 import { store } from './state/store.js'; // Import StateStore singleton
+import { SafeUI } from './utils/safe-ui.js'; // Import SafeUI wrapper
 
 class KazooApp {
     /**
@@ -191,6 +192,10 @@ class KazooApp {
 
         // Check compatibility
         this.checkCompatibility();
+
+        // Initialize SafeUI wrapper for null-safe DOM manipulation
+        this.safeUI = new SafeUI(this.ui);
+        console.log('[Main] SafeUI wrapper initialized');
 
         // Bind events
         this.bindEvents();
@@ -991,11 +996,13 @@ class KazooApp {
      * @private
      */
     _updateUIForStarted() {
-        // Toggle visibility
-        if (this.ui.startBtn) this.ui.startBtn.classList.add('hidden');
-        if (this.ui.stopBtn) this.ui.stopBtn.classList.remove('hidden');
-        if (this.ui.statusBar) this.ui.statusBar.classList.remove('hidden');
-        if (this.ui.visualizer) this.ui.visualizer.classList.remove('hidden');
+        // Toggle visibility using SafeUI
+        this.safeUI.batchUpdate({
+            startBtn: { hide: true },
+            stopBtn: { show: true },
+            statusBar: { show: true },
+            visualizer: { show: true }
+        });
 
         // Force visualizer resize to prevent blank canvas
         requestAnimationFrame(() => {
@@ -1016,19 +1023,19 @@ class KazooApp {
     _updateStatusText() {
         const mode = this.useContinuousMode ? 'Continuous' : 'Legacy';
 
-        if (this.ui.systemStatus) {
-            this.ui.systemStatus.textContent = `Running (${mode})`;
-            this.ui.systemStatus.classList.add('active');
-        }
-
-        if (this.ui.recordingStatus) {
-            this.ui.recordingStatus.textContent = 'Playing';
-            this.ui.recordingStatus.classList.add('status-ready');
-        }
-
-        if (this.ui.recordingHelper) {
-            this.ui.recordingHelper.textContent = 'Hum or sing to hear your voice transformed!';
-        }
+        this.safeUI.batchUpdate({
+            systemStatus: {
+                setText: `Running (${mode})`,
+                addClass: 'active'
+            },
+            recordingStatus: {
+                setText: 'Playing',
+                addClass: 'status-ready'
+            },
+            recordingHelper: {
+                setText: 'Hum or sing to hear your voice transformed!'
+            }
+        });
     }
 
     /**
@@ -1042,15 +1049,16 @@ class KazooApp {
         // Show user-friendly error
         this._showError(error.message || 'Startup failed. Check microphone permissions and browser compatibility.');
 
-        // Reset UI state
-        if (this.ui.startBtn) this.ui.startBtn.classList.remove('hidden');
-        if (this.ui.stopBtn) this.ui.stopBtn.classList.add('hidden');
-
-        if (this.ui.recordingStatus) {
-            this.ui.recordingStatus.textContent = 'Error';
-            this.ui.recordingStatus.classList.remove('status-ready');
-            this.ui.recordingStatus.classList.add('status-error');
-        }
+        // Reset UI state using SafeUI
+        this.safeUI.batchUpdate({
+            startBtn: { show: true },
+            stopBtn: { hide: true },
+            recordingStatus: {
+                setText: 'Error',
+                removeClass: 'status-ready',
+                addClass: 'status-error'
+            }
+        });
     }
 
     async start() {
@@ -1279,15 +1287,21 @@ class KazooApp {
             }
         }
 
-        // Update UI (with null checks)
-        if (this.ui.startBtn) this.ui.startBtn.classList.remove('hidden');
-        if (this.ui.stopBtn) this.ui.stopBtn.classList.add('hidden');
-        if (this.ui.systemStatus) {
-            this.ui.systemStatus.textContent = 'Stopped';
-            this.ui.systemStatus.classList.remove('active');
-        }
-        if (this.ui.recordingStatus) this.ui.recordingStatus.textContent = 'Ready';
-        if (this.ui.recordingHelper) this.ui.recordingHelper.textContent = 'No setup required • Works in your browser';
+        // Update UI using SafeUI
+        this.safeUI.batchUpdate({
+            startBtn: { show: true },
+            stopBtn: { hide: true },
+            systemStatus: {
+                setText: 'Stopped',
+                removeClass: 'active'
+            },
+            recordingStatus: {
+                setText: 'Ready'
+            },
+            recordingHelper: {
+                setText: 'No setup required • Works in your browser'
+            }
+        });
 
         console.log('Kazoo Proto stopped');
     }
