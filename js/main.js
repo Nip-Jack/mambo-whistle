@@ -330,111 +330,47 @@ class MamboApp {
     }
 
     /**
-     * Setup AI Jam UI interactions
+     * Setup AI Jam UI interactions (State-Driven)
      * @private
      */
     _setupAiJamUI() {
-        if (!this.ui.aiJamBtn) return;
+        // 1. Bind UI Events -> Controller Actions
+        this.view.bindAiJamUI({
+            onToggleAiJam: async () => {
+                if (!this.aiHarmonizer) return;
 
-        // Helper to reset classes
-        const resetBtnClasses = () => {
-            this.ui.aiJamBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'text-white');
-            this.ui.aiJamBtn.classList.add('bg-white/80', 'hover:bg-white', 'text-gray-900');
-            
-            this.ui.aiJamTitle.classList.remove('text-white');
-            this.ui.aiJamTitle.classList.add('text-gray-900');
-            
-            this.ui.aiJamStatus.classList.remove('text-blue-100');
-            this.ui.aiJamStatus.classList.add('text-gray-500');
-        };
+                try {
+                    // Ensure Audio Context is running
+                    if (Tone.context.state !== 'running') {
+                        await Tone.start();
+                        console.log('[AI Jam] AudioContext resumed by user click');
+                    }
 
-        const setActiveClasses = () => {
-            this.ui.aiJamBtn.classList.remove('bg-white/80', 'hover:bg-white', 'text-gray-900');
-            this.ui.aiJamBtn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'text-white');
+                    // Toggle AI Harmonizer
+                    if (this.aiHarmonizer.enabled) {
+                        this.aiHarmonizer.disable();
+                    } else {
+                        await this.aiHarmonizer.enable();
+                    }
+                } catch (err) {
+                    console.error('[AI Jam] Click handler error:', err);
+                    alert("Please click 'Start Engine' first to enable audio features.");
+                }
+            }
+        });
 
-            this.ui.aiJamTitle.classList.remove('text-gray-900');
-            this.ui.aiJamTitle.classList.add('text-white');
-            
-            this.ui.aiJamStatus.classList.remove('text-gray-500');
-            this.ui.aiJamStatus.classList.add('text-blue-100');
-        };
-
-        // Status Update Callback
+        // 2. Connect AI Harmonizer Status Changes to View Rendering
         if (this.aiHarmonizer) {
             this.aiHarmonizer.onStatusChange = ({ status, message }) => {
                 console.log(`[AI Jam] Status: ${status} - ${message}`);
-                
-                // Hide all icons first
-                this.ui.aiIconIdle.classList.add('hidden');
-                this.ui.aiIconLoading.classList.add('hidden');
-                this.ui.aiIconActive.classList.add('hidden');
-                this.ui.aiProgressBar.style.width = '0%'; // Reset progress by default
 
-                if (status === 'loading') {
-                    // Loading State
-                    this.ui.aiIconLoading.classList.remove('hidden');
-                    this.ui.aiJamTitle.textContent = 'Downloading...';
-                    this.ui.aiJamStatus.textContent = ' ~5MB Model';
-                    this.ui.aiJamBtn.disabled = true;
-                    
-                    // Simulate Progress
-                    setTimeout(() => { this.ui.aiProgressBar.style.width = '40%'; }, 100);
-                    setTimeout(() => { this.ui.aiProgressBar.style.width = '80%'; }, 2000);
-                    
-                } else if (status === 'ready') {
-                    // Active State
-                    setActiveClasses();
-                    this.ui.aiIconActive.classList.remove('hidden');
-                    this.ui.aiJamTitle.textContent = 'Smart Jam';
-                    this.ui.aiJamStatus.textContent = 'Listening...';
-                    this.ui.aiJamBtn.disabled = false;
-
-                } else if (status === 'processing') {
-                    // Thinking State (Keep Active Look)
-                    setActiveClasses();
-                    this.ui.aiIconActive.classList.remove('hidden');
-                    this.ui.aiJamStatus.textContent = 'Generating...';
-                    
-                } else if (status === 'idle') {
-                    // Idle State
-                    resetBtnClasses();
-                    this.ui.aiIconIdle.classList.remove('hidden');
-                    this.ui.aiJamTitle.textContent = 'Smart Jam';
-                    this.ui.aiJamStatus.textContent = 'Off';
-                    this.ui.aiJamBtn.disabled = false;
-
-                } else if (status === 'error') {
-                    // Error State
-                    resetBtnClasses();
-                    this.ui.aiIconIdle.classList.remove('hidden');
-                    this.ui.aiJamTitle.textContent = 'Error';
-                    this.ui.aiJamStatus.textContent = 'Try Again';
-                    this.ui.aiJamBtn.disabled = false;
-                }
+                // Render new state via View layer
+                this.view.renderAiJam({ status, message });
             };
         }
 
-        this.ui.aiJamBtn.addEventListener('click', async () => {
-            if (!this.aiHarmonizer) return;
-
-            try {
-                // 1. Ensure Audio Context is running
-                if (Tone.context.state !== 'running') {
-                    await Tone.start();
-                    console.log('[AI Jam] AudioContext resumed by user click');
-                }
-
-                // 2. Toggle AI
-                if (this.aiHarmonizer.enabled) {
-                    this.aiHarmonizer.disable();
-                } else {
-                    await this.aiHarmonizer.enable();
-                }
-            } catch (err) {
-                console.error('[AI Jam] Click handler error:', err);
-                alert("Please click 'Start Engine' first to enable audio features.");
-            }
-        });
+        // 3. Initial Render
+        this.view.renderAiJam({ status: 'idle' });
     }
 
     /**

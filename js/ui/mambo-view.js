@@ -20,6 +20,15 @@ export class MamboView {
         // Instrument Elements
         this.instrumentBtns = this.doc.querySelectorAll('.instrument-btn');
         this.instrumentStatus = this.doc.getElementById('instrumentStatus');
+
+        // AI Jam Elements
+        this.aiJamBtn = this.doc.getElementById('aiJamBtn');
+        this.aiJamTitle = this.doc.getElementById('aiJamTitle');
+        this.aiJamStatus = this.doc.getElementById('aiJamStatus');
+        this.aiIconIdle = this.doc.getElementById('aiIconIdle');
+        this.aiIconLoading = this.doc.getElementById('aiIconLoading');
+        this.aiIconActive = this.doc.getElementById('aiIconActive');
+        this.aiProgressBar = this.doc.getElementById('aiProgressBar');
     }
 
     /**
@@ -180,6 +189,134 @@ export class MamboView {
                     btn.classList.remove('active');
                 }
             });
+        }
+    }
+
+    /**
+     * Bind AI Jam UI events
+     * @param {object} handlers
+     * @param {() => void} handlers.onToggleAiJam
+     */
+    bindAiJamUI(handlers) {
+        if (this.aiJamBtn && handlers.onToggleAiJam) {
+            this.aiJamBtn.addEventListener('click', handlers.onToggleAiJam);
+        }
+    }
+
+    /**
+     * Render AI Jam State
+     * @param {object} aiState - AI Jam state object
+     * @param {string} aiState.status - 'idle' | 'loading' | 'ready' | 'processing' | 'error'
+     * @param {string} [aiState.message] - Optional status message
+     */
+    renderAiJam(aiState) {
+        if (!aiState || !this.aiJamBtn) return;
+
+        const { status } = aiState;
+
+        // Hide all icons first
+        if (this.aiIconIdle) this.aiIconIdle.classList.add('hidden');
+        if (this.aiIconLoading) this.aiIconLoading.classList.add('hidden');
+        if (this.aiIconActive) this.aiIconActive.classList.add('hidden');
+        if (this.aiProgressBar) this.aiProgressBar.style.width = '0%';
+
+        // Define style presets
+        const idleClasses = {
+            add: ['bg-white/80', 'hover:bg-white', 'text-gray-900'],
+            remove: ['bg-blue-600', 'hover:bg-blue-700', 'text-white']
+        };
+        const activeClasses = {
+            add: ['bg-blue-600', 'hover:bg-blue-700', 'text-white'],
+            remove: ['bg-white/80', 'hover:bg-white', 'text-gray-900']
+        };
+
+        const applyClasses = (element, preset) => {
+            if (!element) return;
+            element.classList.remove(...preset.remove);
+            element.classList.add(...preset.add);
+        };
+
+        switch (status) {
+            case 'loading':
+                // Loading State
+                if (this.aiIconLoading) this.aiIconLoading.classList.remove('hidden');
+                if (this.aiJamTitle) this.aiJamTitle.textContent = 'Downloading...';
+                if (this.aiJamStatus) this.aiJamStatus.textContent = '~5MB Model';
+                if (this.aiJamBtn) this.aiJamBtn.disabled = true;
+
+                // Simulate progress animation
+                if (this.aiProgressBar) {
+                    setTimeout(() => { this.aiProgressBar.style.width = '40%'; }, 100);
+                    setTimeout(() => { this.aiProgressBar.style.width = '80%'; }, 2000);
+                }
+                break;
+
+            case 'ready':
+                // Active State
+                applyClasses(this.aiJamBtn, activeClasses);
+                if (this.aiJamTitle) {
+                    this.aiJamTitle.classList.remove('text-gray-900');
+                    this.aiJamTitle.classList.add('text-white');
+                }
+                if (this.aiJamStatus) {
+                    this.aiJamStatus.classList.remove('text-gray-500');
+                    this.aiJamStatus.classList.add('text-blue-100');
+                }
+                if (this.aiIconActive) this.aiIconActive.classList.remove('hidden');
+                if (this.aiJamTitle) this.aiJamTitle.textContent = 'Smart Jam';
+                if (this.aiJamStatus) this.aiJamStatus.textContent = 'Listening...';
+                if (this.aiJamBtn) this.aiJamBtn.disabled = false;
+                break;
+
+            case 'processing':
+                // Thinking State
+                applyClasses(this.aiJamBtn, activeClasses);
+                if (this.aiJamTitle) {
+                    this.aiJamTitle.classList.remove('text-gray-900');
+                    this.aiJamTitle.classList.add('text-white');
+                }
+                if (this.aiJamStatus) {
+                    this.aiJamStatus.classList.remove('text-gray-500');
+                    this.aiJamStatus.classList.add('text-blue-100');
+                }
+                if (this.aiIconActive) this.aiIconActive.classList.remove('hidden');
+                if (this.aiJamStatus) this.aiJamStatus.textContent = 'Generating...';
+                break;
+
+            case 'error':
+                // Error State
+                applyClasses(this.aiJamBtn, idleClasses);
+                if (this.aiJamTitle) {
+                    this.aiJamTitle.classList.remove('text-white');
+                    this.aiJamTitle.classList.add('text-gray-900');
+                }
+                if (this.aiJamStatus) {
+                    this.aiJamStatus.classList.remove('text-blue-100');
+                    this.aiJamStatus.classList.add('text-gray-500');
+                }
+                if (this.aiIconIdle) this.aiIconIdle.classList.remove('hidden');
+                if (this.aiJamTitle) this.aiJamTitle.textContent = 'Error';
+                if (this.aiJamStatus) this.aiJamStatus.textContent = 'Try Again';
+                if (this.aiJamBtn) this.aiJamBtn.disabled = false;
+                break;
+
+            case 'idle':
+            default:
+                // Idle State
+                applyClasses(this.aiJamBtn, idleClasses);
+                if (this.aiJamTitle) {
+                    this.aiJamTitle.classList.remove('text-white');
+                    this.aiJamTitle.classList.add('text-gray-900');
+                }
+                if (this.aiJamStatus) {
+                    this.aiJamStatus.classList.remove('text-blue-100');
+                    this.aiJamStatus.classList.add('text-gray-500');
+                }
+                if (this.aiIconIdle) this.aiIconIdle.classList.remove('hidden');
+                if (this.aiJamTitle) this.aiJamTitle.textContent = 'Smart Jam';
+                if (this.aiJamStatus) this.aiJamStatus.textContent = 'Off';
+                if (this.aiJamBtn) this.aiJamBtn.disabled = false;
+                break;
         }
     }
 }
