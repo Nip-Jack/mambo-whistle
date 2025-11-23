@@ -15,9 +15,21 @@ const installMagentaMock = (continueImpl = async () => ({ notes: [] })) => {
     }
   }
 
-  global.window.mm = {
-    MusicRNN: FakeRNN,
-    freqToMidi: (freq) => Math.round(freq)
+  // Mock the Magenta API structure (updated to match ai-harmonizer.js usage)
+  global.window.music_rnn = {
+    MusicRNN: FakeRNN
+  };
+
+  global.window.core = {
+    sequences: {
+      quantizeNoteSequence: (seq, stepsPerQuarter) => {
+        // Simple mock: just add quantizationInfo
+        return {
+          ...seq,
+          quantizationInfo: { stepsPerQuarter }
+        };
+      }
+    }
   };
 
   return FakeRNN;
@@ -27,7 +39,9 @@ describe('AiHarmonizer', () => {
   beforeEach(() => {
     vi.resetModules();
     installToneMock();
-    global.window.mm = undefined;
+    // Clean up Magenta mocks
+    global.window.music_rnn = undefined;
+    global.window.core = undefined;
   });
 
   it('enables successfully with Magenta and Tone available', async () => {
@@ -37,7 +51,7 @@ describe('AiHarmonizer', () => {
     const statusSpy = vi.fn();
     harmonizer.onStatusChange = statusSpy;
 
-    vi.spyOn(harmonizer, '_loadScript').mockResolvedValue();
+    // Note: _loadScript() was removed in the AI Harmonizer refactor (scripts now preloaded in HTML)
     const FakeRNN = installMagentaMock();
 
     await harmonizer.enable();
@@ -57,7 +71,7 @@ describe('AiHarmonizer', () => {
     const { AiHarmonizer } = await import('../../js/features/ai-harmonizer.js');
     const harmonizer = new AiHarmonizer();
 
-    vi.spyOn(harmonizer, '_loadScript').mockResolvedValue();
+    // Note: _loadScript() was removed in the AI Harmonizer refactor (scripts now preloaded in HTML)
     await harmonizer.enable();
 
     // Seed buffer directly then ask generator to run
@@ -79,7 +93,7 @@ describe('AiHarmonizer', () => {
     const { AiHarmonizer } = await import('../../js/features/ai-harmonizer.js');
     const harmonizer = new AiHarmonizer();
 
-    vi.spyOn(harmonizer, '_loadScript').mockResolvedValue();
+    // Note: _loadScript() was removed in the AI Harmonizer refactor (scripts now preloaded in HTML)
     await harmonizer.enable();
 
     harmonizer.disable();
