@@ -226,10 +226,13 @@ export class AiHarmonizer {
 
             // Generate continuation (16 steps ≈ 1 bar)
             const rnnSteps = 16;
+            // chord_pitches_improv 需要和弦进行，简单使用 C-G-Am-F 循环
+            const chords = ['C', 'G', 'Am', 'F'];
             const result = await this.model.continueSequence(
                 inputSequence,
                 rnnSteps,
-                this.temperature
+                this.temperature,
+                chords
             );
 
             console.log('[AI Harmonizer] ✓ Generated', result?.notes?.length || 0, 'notes');

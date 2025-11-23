@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Harmonizer Test - Standalone</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #00ff00;
+            background: #0a0a0a;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        .error {
+            color: #ff0000;
+        }
+        .success {
+            color: #00ff00;
+        }
+        .warning {
+            color: #ffaa00;
+        }
+        #console {
+            background: #000;
+            padding: 20px;
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #00ff00;
+            margin: 20px 0;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #00ff00;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🤖 AI Harmonizer - Complete Integration Test</h1>
+
+    <div class="status">
+        <h2>Status: <span id="status">Initializing...</span></h2>
+    </div>
+
+    <div>
+        <button id="step1" onclick="testStep1()">Step 1: Check Dependencies</button>
+        <button id="step2" onclick="testStep2()" disabled>Step 2: Load Model</button>
+        <button id="step3" onclick="testStep3()" disabled>Step 3: Generate Harmony</button>
+        <button id="step4" onclick="testStep4()" disabled>Step 4: Play Audio</button>
+    </div>
+
+    <div id="console"></div>
+
+    <!-- Dependencies -->
+    <script src="js/lib/tone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.2.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1/es6/core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@magenta/music@1.23.1/es6/music_rnn.js"></script>
+
+    <script>
+        let model = null;
+        let synth = null;
+        let generatedNotes = null;
+
+        // Console logger
+        function log(message, type = 'info') {
+            const consoleDiv = document.getElementById('console');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.style.borderLeftColor = type === 'error' ? '#ff0000' : type === 'success' ? '#00ff00' : '#ffaa00';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleDiv.appendChild(entry);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function setStatus(msg, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = msg;
+            statusEl.className = type;
+        }
+
+        // Step 1: Check Dependencies
+        async function testStep1() {
+            log('=== STEP 1: Checking Dependencies ===');
+
+            try {
+                // Check TensorFlow.js
+                if (typeof tf === 'undefined') {
+                    throw new Error('TensorFlow.js NOT loaded');
+                }
+                log(`✓ TensorFlow.js loaded (version: ${tf.version.tfjs})`, 'success');
+
+                // Check Magenta Core
+                if (typeof core === 'undefined') {
+                    throw new Error('Magenta Core NOT loaded');
+                }
+                log('✓ Magenta Core loaded', 'success');
+
+                // Check MusicRNN
+                if (typeof music_rnn === 'undefined') {
+                    throw new Error('MusicRNN NOT loaded');
+                }
+                log('✓ MusicRNN module loaded', 'success');
+
+                // Check Tone.js
+                if (typeof Tone === 'undefined') {
+                    throw new Error('Tone.js NOT loaded');
+                }
+                log(`✓ Tone.js loaded (version: ${Tone.version})`, 'success');
+
+                // Enable next step
+                document.getElementById('step2').disabled = false;
+                setStatus('Dependencies OK - Ready to load model', 'success');
+
+            } catch (error) {
+                log(`✗ ERROR: ${error.message}`, 'error');
+                setStatus('Dependency check failed', 'error');
+            }
+        }
+
+        // Step 2: Load Model
+        async function testStep2() {
+            log('=== STEP 2: Loading MusicRNN Model ===');
+            setStatus('Loading model (this may take 10-30 seconds)...', 'warning');
+
+            const startTime = Date.now();
+
+            try {
+                const checkpointURL = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/chord_pitches_improv';
+                log(`Creating MusicRNN from: ${checkpointURL}`);
+
+                model = new music_rnn.MusicRNN(checkpointURL);
+                log('✓ MusicRNN instance created', 'success');
+
+                log('Initializing model (downloading weights)...');
+                await model.initialize();
+
+                const loadTime = ((Date.now() - startTime) / 1000).toFixed(2);
+                log(`✓ Model initialized successfully in ${loadTime}s`, 'success');
+
+                // Check if model is ready
+                if (!model.isInitialized()) {
+                    throw new Error('Model failed to initialize');
+                }
+                log('✓ Model isInitialized() = true', 'success');
+
+                // Get model info
+                log(`Model checkpoint: chord_pitches_improv`);
+                log(`Temperature: 1.1 (will be used for generation)`);
+
+                // Enable next step
+                document.getElementById('step3').disabled = false;
+                setStatus(`Model loaded in ${loadTime}s - Ready to generate`, 'success');
+
+            } catch (error) {
+                log(`✗ ERROR: ${error.message}`, 'error');
+                log(`Stack: ${error.stack}`, 'error');
+                setStatus('Model loading failed', 'error');
+            }
+        }
+
+        // Step 3: Generate Harmony
+        async function testStep3() {
+            log('=== STEP 3: Generating Harmony ===');
+            setStatus('Generating harmony from C major scale...', 'warning');
+
+            try {
+                // Create input sequence (C major scale) with chord progression
+                const inputSequence = {
+                    notes: [
+                        { pitch: 60, startTime: 0.0, endTime: 0.25, velocity: 80 },   // C4
+                        { pitch: 62, startTime: 0.25, endTime: 0.5, velocity: 80 },   // D4
+                        { pitch: 64, startTime: 0.5, endTime: 0.75, velocity: 80 },   // E4
+                        { pitch: 65, startTime: 0.75, endTime: 1.0, velocity: 80 },   // F4
+                        { pitch: 67, startTime: 1.0, endTime: 1.25, velocity: 80 },   // G4
+                        { pitch: 69, startTime: 1.25, endTime: 1.5, velocity: 80 },   // A4
+                        { pitch: 71, startTime: 1.5, endTime: 1.75, velocity: 80 },   // B4
+                        { pitch: 72, startTime: 1.75, endTime: 2.0, velocity: 80 }    // C5
+                    ],
+                    totalTime: 2.0,
+                    quantizationInfo: { stepsPerQuarter: 4 }
+                };
+
+                log(`Input: C major scale (${inputSequence.notes.length} notes)`);
+                log('Calling model.continueSequence() with C major chords...');
+
+                const startTime = Date.now();
+                // chord_pitches_improv 需要和弦进行
+                const chords = ['C', 'C', 'G', 'G', 'Am', 'Am', 'F', 'F'];
+                const result = await model.continueSequence(
+                    inputSequence,
+                    16,  // Generate 16 steps
+                    1.1, // Temperature
+                    chords  // Chord progression
+                );
+
+                const genTime = ((Date.now() - startTime) / 1000).toFixed(2);
+
+                if (!result || !result.notes || result.notes.length === 0) {
+                    throw new Error('Model returned no notes');
+                }
+
+                generatedNotes = result.notes;
+                log(`✓ Generated ${result.notes.length} notes in ${genTime}s`, 'success');
+
+                // Show generated notes
+                log('Generated notes (MIDI):');
+                result.notes.slice(0, 10).forEach((note, i) => {
+                    const noteName = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][note.pitch % 12];
+                    const octave = Math.floor(note.pitch / 12) - 1;
+                    log(`  [${i}] ${noteName}${octave} (MIDI ${note.pitch}) - Duration: ${(note.endTime - note.startTime).toFixed(2)}s`);
+                });
+
+                if (result.notes.length > 10) {
+                    log(`  ... and ${result.notes.length - 10} more notes`);
+                }
+
+                // Enable next step
+                document.getElementById('step4').disabled = false;
+                setStatus(`Generated ${result.notes.length} notes - Ready to play`, 'success');
+
+            } catch (error) {
+                log(`✗ ERROR: ${error.message}`, 'error');
+                log(`Stack: ${error.stack}`, 'error');
+                setStatus('Generation failed', 'error');
+            }
+        }
+
+        // Step 4: Play Audio
+        async function testStep4() {
+            log('=== STEP 4: Playing Generated Audio ===');
+            setStatus('Starting audio playback...', 'warning');
+
+            try {
+                // Resume AudioContext (requires user gesture)
+                if (Tone.context.state !== 'running') {
+                    await Tone.start();
+                    log('✓ AudioContext started', 'success');
+                }
+
+                // Create synth if not exists
+                if (!synth) {
+                    synth = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "fatsawtooth", count: 3, spread: 30 },
+                        envelope: { attack: 0.2, decay: 0.1, sustain: 0.5, release: 1 }
+                    }).toDestination();
+
+                    synth.volume.value = -6; // Louder for testing
+
+                    const reverb = new Tone.Reverb(2).toDestination();
+                    synth.connect(reverb);
+
+                    log('✓ Synth created with reverb', 'success');
+                }
+
+                // Play notes
+                const now = Tone.now();
+                log(`Playing ${generatedNotes.length} notes...`);
+
+                generatedNotes.forEach((note, i) => {
+                    const duration = (note.endTime - note.startTime) || 0.25;
+                    const timeOffset = (note.startTime - generatedNotes[0].startTime) * 0.5;
+                    const freq = Tone.Frequency(note.pitch, "midi");
+
+                    synth.triggerAttackRelease(freq, duration, now + timeOffset + 0.1);
+
+                    if (i < 5) {
+                        log(`  Playing note ${i}: ${freq.toNote()} at t=${(now + timeOffset).toFixed(2)}s`);
+                    }
+                });
+
+                log('✓ Audio playback started', 'success');
+                setStatus(`Playing ${generatedNotes.length} notes - Listen!`, 'success');
+
+                // Show completion message after playback
+                const totalDuration = (generatedNotes[generatedNotes.length - 1].endTime - generatedNotes[0].startTime) * 0.5;
+                setTimeout(() => {
+                    log('=== TEST COMPLETE ===', 'success');
+                    log('✓ All steps passed!', 'success');
+                    setStatus('All tests passed - AI Harmonizer is working!', 'success');
+                }, totalDuration * 1000 + 1000);
+
+            } catch (error) {
+                log(`✗ ERROR: ${error.message}`, 'error');
+                log(`Stack: ${error.stack}`, 'error');
+                setStatus('Audio playback failed', 'error');
+            }
+        }
+
+        // Auto-start on page load
+        window.addEventListener('load', () => {
+            log('Test page loaded');
+            log('Click "Step 1" to begin verification');
+            setStatus('Ready - Click Step 1 to start', 'warning');
+        });
+    </script>
+</body>
+</html>
