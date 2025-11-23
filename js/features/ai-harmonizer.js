@@ -18,7 +18,7 @@ export class AiHarmonizer {
         this.backingSynth = null;
 
         // Configuration
-        this.checkpointURL = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/chord_pitches_improv';
+        this.checkpointURL = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn';
         this.temperature = 1.1; // Creativity level (0.5-1.5)
 
         // Data Buffering
@@ -226,13 +226,10 @@ export class AiHarmonizer {
 
             // Generate continuation (16 steps ≈ 1 bar)
             const rnnSteps = 16;
-            // chord_pitches_improv 需要和弦进行，简单使用 C-G-Am-F 循环
-            const chords = ['C', 'G', 'Am', 'F'];
             const result = await this.model.continueSequence(
                 inputSequence,
                 rnnSteps,
-                this.temperature,
-                chords
+                this.temperature
             );
 
             console.log('[AI Harmonizer] ✓ Generated', result?.notes?.length || 0, 'notes');

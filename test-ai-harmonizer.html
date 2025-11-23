@@ -153,7 +153,7 @@
             const startTime = Date.now();
 
             try {
-                const checkpointURL = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/chord_pitches_improv';
+                const checkpointURL = 'https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/melody_rnn';
                 log(`Creating MusicRNN from: ${checkpointURL}`);
 
                 model = new music_rnn.MusicRNN(checkpointURL);
@@ -209,16 +209,13 @@
                 };
 
                 log(`Input: C major scale (${inputSequence.notes.length} notes)`);
-                log('Calling model.continueSequence() with C major chords...');
+                log('Calling model.continueSequence()...');
 
                 const startTime = Date.now();
-                // chord_pitches_improv 需要和弦进行
-                const chords = ['C', 'C', 'G', 'G', 'Am', 'Am', 'F', 'F'];
                 const result = await model.continueSequence(
                     inputSequence,
                     16,  // Generate 16 steps
-                    1.1, // Temperature
-                    chords  // Chord progression
+                    1.1  // Temperature
                 );
 
                 const genTime = ((Date.now() - startTime) / 1000).toFixed(2);

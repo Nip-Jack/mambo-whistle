@@ -41,6 +41,7 @@ Whether you want to sound like a saxophone, a violin, or a futuristic synthesize
     -   **Liquid Visualizer**: 60fps hardware-accelerated canvas rendering for real-time pitch feedback.
 -   **Smart Auto-Tune**: Integrated pitch correction with adjustable strength and speed, supporting multiple scales (Chromatic, Major, Minor, Pentatonic, Blues).
 -   **Expressive Synthesis**: Maps vocal volume and timbre to synth parameters (Cutoff, Resonance, Envelope) for dynamic expression.
+-   **🆕 AI Jam Mode** *(New Feature)*: Real-time AI harmony generation powered by Google Magenta's MusicRNN. The AI listens to your melody and generates accompanying harmonies automatically every 4 seconds.
 -   **Privacy First**: All processing happens locally in the browser. No audio data is ever sent to a server.
 
 ## Architecture
