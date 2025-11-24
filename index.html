@@ -117,8 +117,8 @@
         /* 默认状态下隐藏彩色边框 */
         .card-border-gradient {
             position: absolute;
-            inset: -3px; /* 边框宽度 */
-            border-radius: 26px; /* 比内部圆角大一点 */
+            inset: -3px; /* 边框宽度 (3px border) */
+            border-radius: 23px; /* card-inner is 20px, so gradient is 20px + 3px = 23px */
             background: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853);
             background-size: 300% 300%;
             z-index: 0; /* 在卡片下面 */
@@ -233,11 +233,10 @@
                     </svg>
                 </button>
 
-                <!-- Settings Button with Text Guide -->
+                <!-- Settings Button - Icon Only (matching theme toggle size) -->
                 <div class="relative group/settings">
-                    <button id="settingsBtn" class="theme-button flex items-center gap-2.5 backdrop-blur-sm shadow-sm px-4 py-1.5 rounded-full hover:scale-105 active:scale-95">
+                    <button id="settingsBtn" class="theme-button flex items-center justify-center w-10 h-10 backdrop-blur-sm shadow-sm rounded-full hover:scale-105 active:scale-95" aria-label="Settings">
                         <svg class="w-5 h-5 text-gray-600 group-hover/settings:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <span style="font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: 11px; font-weight: 600;">Settings</span>
                     </button>
 
                     <!-- Tooltip for Settings -->
@@ -725,53 +724,92 @@
 
                         <div>
                             <h3 style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif; font-size: 28px; font-weight: 700; color: var(--color-text);" class="mb-3">Start Session</h3>
-                            <p id="recordingHelper" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-size: 15px; font-weight: 400; line-height: 1.5; color: var(--color-text-secondary);" class="leading-relaxed max-w-[90%]">
-                                Use headphones. Wired microphones recommended over Bluetooth for best latency.
-                            </p>
+
+                            <!-- Enhanced Tips Card with Settings Guidance -->
+                            <div class="mb-4 p-4 rounded-2xl backdrop-blur-sm border" style="background: var(--color-surface); border-color: var(--color-separator);">
+                                <!-- Headphone Reminder -->
+                                <div class="flex items-start gap-3 mb-3">
+                                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style="background: rgba(29, 78, 216, 0.1);">
+                                        <svg class="w-4 h-4" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-size: 13px; font-weight: 600; color: var(--color-text);" class="mb-1">Use Headphones</p>
+                                        <p style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-size: 12px; font-weight: 400; line-height: 1.4; color: var(--color-text-secondary);">Wired mic recommended over Bluetooth for best latency</p>
+                                    </div>
+                                </div>
+
+                                <!-- Settings Guidance -->
+                                <div class="flex items-start gap-3 pt-3 border-t" style="border-color: var(--color-separator);">
+                                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center" style="background: rgba(147, 197, 253, 0.1);">
+                                        <svg class="w-4 h-4" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-size: 13px; font-weight: 600; color: var(--color-text);" class="mb-1">Advanced Settings</p>
+                                        <p style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; font-size: 12px; font-weight: 400; line-height: 1.4; color: var(--color-text-secondary);">
+                                            Tap <span class="inline-flex items-center justify-center w-5 h-5 rounded-full mx-1" style="background: rgba(147, 197, 253, 0.2); vertical-align: middle;">
+                                                <svg class="w-3 h-3" style="color: var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6"/></svg>
+                                            </span> top-right to configure audio, auto-tune, and effects
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="mt-8 relative space-y-3">
-                            <!-- Start Engine Button - Modern Gradient Design -->
-                            <button id="startBtn" class="group relative w-full h-16 overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
-                                <!-- Gradient Background with Animation -->
-                                <div class="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-[length:200%_100%] group-hover:bg-[position:100%_0] transition-all duration-700"></div>
+                        <div class="mt-6 relative space-y-3">
+                            <!-- Start Engine Button - Apple/Google Inspired Design -->
+                            <button id="startBtn" class="start-engine-btn group relative w-full h-16 overflow-hidden rounded-2xl transition-all duration-200 active:scale-[0.96]">
+                                <!-- Subtle Gradient Background -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)] via-[#2563eb] to-[var(--color-accent)] rounded-2xl"></div>
 
-                                <!-- Shine Effect on Hover -->
-                                <div class="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300">
-                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                                <!-- Hover Glow Effect -->
+                                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-secondary)]/20 via-transparent to-transparent rounded-2xl"></div>
                                 </div>
+
+                                <!-- Glass Overlay for Depth -->
+                                <div class="absolute inset-0 bg-white/[0.08] backdrop-blur-sm rounded-2xl"></div>
 
                                 <!-- Button Content -->
                                 <div class="relative flex items-center justify-center gap-3 h-full">
-                                    <!-- Play Icon with Pulse -->
-                                    <div class="relative">
-                                        <div class="absolute inset-0 bg-white/30 rounded-full animate-ping"></div>
-                                        <svg class="relative w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z"/>
-                                        </svg>
-                                    </div>
-                                    <span class="text-white text-base font-bold tracking-wide">Start Engine</span>
+                                    <!-- Play Icon -->
+                                    <svg class="w-5 h-5 text-white/95" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                    <span class="text-white/95 text-base font-semibold tracking-wide" style="font-family: var(--font-body);">Start Engine</span>
                                 </div>
+
+                                <!-- Bottom Shadow for 3D Effect -->
+                                <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-black/20 to-transparent"></div>
                             </button>
 
-                            <!-- Stop Session Button - Elegant Danger Design -->
-                            <button id="stopBtn" class="hidden group relative w-full h-16 overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
-                                <!-- Dark Red Background -->
-                                <div class="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 to-red-600 bg-[length:200%_100%] group-hover:bg-[position:100%_0] transition-all duration-700"></div>
+                            <!-- Stop Session Button - Apple/Google Danger Style -->
+                            <button id="stopBtn" class="stop-engine-btn hidden group relative w-full h-16 overflow-hidden rounded-2xl transition-all duration-200 active:scale-[0.96]">
+                                <!-- Refined Red Gradient -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-[#dc2626] via-[#ef4444] to-[#b91c1c] rounded-2xl"></div>
 
-                                <!-- Glow Effect -->
-                                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.3)]"></div>
+                                <!-- Hover Glow Effect -->
+                                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-2xl"></div>
                                 </div>
+
+                                <!-- Glass Overlay for Depth -->
+                                <div class="absolute inset-0 bg-white/[0.08] backdrop-blur-sm rounded-2xl"></div>
 
                                 <!-- Button Content -->
                                 <div class="relative flex items-center justify-center gap-3 h-full">
                                     <!-- Stop Icon -->
-                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-white/95" fill="currentColor" viewBox="0 0 24 24">
                                         <rect x="6" y="6" width="12" height="12" rx="2"/>
                                     </svg>
-                                    <span class="text-white text-base font-bold tracking-wide">Stop Session</span>
+                                    <span class="text-white/95 text-base font-semibold tracking-wide" style="font-family: var(--font-body);">Stop Session</span>
                                 </div>
+
+                                <!-- Bottom Shadow for 3D Effect -->
+                                <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-black/20 to-transparent"></div>
                             </button>
 
                             <!-- AI Jam Button (Google Style) -->

@@ -527,7 +527,7 @@ html[data-theme="light"] .instrument-btn .text-gray-400 {
   background: var(--color-surface);
 
   border: 1px solid var(--color-surface-border);
-  border-radius: var(--radius-2xl);
+  border-radius: 20px; /* ✅ Match HTML rounded-[20px] */
 
   /* iOS Shadow Stack */
   box-shadow: var(--shadow-glass);
@@ -547,8 +547,8 @@ html[data-theme="light"] .instrument-btn .text-gray-400 {
 /* Active State - iOS 26 Style */
 .card-border-gradient {
   position: absolute;
-  inset: -2px;
-  border-radius: calc(var(--radius-2xl) + 2px);
+  inset: -3px; /* ✅ Match HTML inline style (3px border width) */
+  border-radius: 23px; /* ✅ 20px (card) + 3px (border) = 23px */
   background: linear-gradient(135deg,
     var(--color-primary),
     var(--color-accent),
@@ -1049,42 +1049,85 @@ p, li, span, a, button, input, select, textarea {
    🌊 The Great Wave - Components
    ================================ */
 
-/* Start Engine Button - Wave Theme */
-.start-cta,
-.stop-cta {
+/* Start Engine Button - Apple/Google Inspired Design */
+.start-engine-btn,
+.stop-engine-btn {
   font-family: var(--font-body);
   font-weight: 600;
-  border-radius: var(--radius);
-  border: var(--border-width) solid transparent;
-  transition: all 0.3s var(--ease-ios);
+  border: none;
+  cursor: pointer;
+  position: relative;
 }
 
-.start-cta {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  color: white;
-  box-shadow: 
-    0 4px 16px rgba(29, 78, 216, 0.3),
-    0 2px 8px rgba(29, 78, 216, 0.2);
-  border-color: var(--color-primary);
+/* Start Button - Deep Indigo Gradient with Glass Effect */
+.start-engine-btn {
+  box-shadow:
+    0 4px 12px rgba(29, 78, 216, 0.25),
+    0 2px 6px rgba(29, 78, 216, 0.15),
+    0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.start-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 
+.start-engine-btn:hover {
+  box-shadow:
+    0 8px 20px rgba(29, 78, 216, 0.35),
+    0 4px 10px rgba(29, 78, 216, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.start-engine-btn:active {
+  box-shadow:
+    0 2px 6px rgba(29, 78, 216, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Stop Button - Refined Red Gradient with Glass Effect */
+.stop-engine-btn {
+  box-shadow:
+    0 4px 12px rgba(220, 38, 38, 0.25),
+    0 2px 6px rgba(220, 38, 38, 0.15),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.stop-engine-btn:hover {
+  box-shadow:
+    0 8px 20px rgba(220, 38, 38, 0.35),
+    0 4px 10px rgba(220, 38, 38, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.stop-engine-btn:active {
+  box-shadow:
+    0 2px 6px rgba(220, 38, 38, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Light Mode - Refined Shadows for Better Contrast */
+html[data-theme="light"] .start-engine-btn {
+  box-shadow:
+    0 4px 14px rgba(29, 78, 216, 0.3),
+    0 2px 8px rgba(29, 78, 216, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+html[data-theme="light"] .start-engine-btn:hover {
+  box-shadow:
     0 8px 24px rgba(29, 78, 216, 0.4),
-    0 4px 12px rgba(29, 78, 216, 0.3);
+    0 4px 12px rgba(29, 78, 216, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.start-cta:active {
-  transform: translateY(0);
+html[data-theme="light"] .stop-engine-btn {
+  box-shadow:
+    0 4px 14px rgba(220, 38, 38, 0.3),
+    0 2px 8px rgba(220, 38, 38, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-.stop-cta {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  box-shadow: 
-    0 4px 16px rgba(239, 68, 68, 0.3),
-    0 2px 8px rgba(239, 68, 68, 0.2);
+html[data-theme="light"] .stop-engine-btn:hover {
+  box-shadow:
+    0 8px 24px rgba(220, 38, 38, 0.4),
+    0 4px 12px rgba(220, 38, 38, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* Instrument Cards - Wave Theme */

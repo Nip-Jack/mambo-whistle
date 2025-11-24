@@ -1,15 +1,58 @@
-Copyright (c) 2025 Ziming Wang. All Rights Reserved.
+GNU AFFERO GENERAL PUBLIC LICENSE
+Version 3, 19 November 2007
 
-Unauthorized copying, modification, distribution, or use of this software 
-and its associated documentation files (the "Software"), via any medium, 
-is strictly prohibited.
+Copyright (C) 2025 Ziming Wang <https://github.com/Team-Kazoo/mambo-whistle>
 
-The Software is proprietary and confidential. 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+================================================================================
+
+ADDITIONAL TERMS AND CONDITIONS:
+
+1. ATTRIBUTION REQUIREMENT
+   - You MUST retain all copyright notices, author attributions, and this
+     license in all copies or substantial portions of the Software.
+   - You MUST NOT remove or alter the "Mambo Whistle" name, "Team Kazoo"
+     attribution, or links to the original repository.
+
+2. COMMERCIAL USE
+   - Commercial use is permitted ONLY if you:
+     a) Open-source your entire application under AGPL-3.0
+     b) Provide clear attribution to the original authors
+     c) Link back to https://github.com/Team-Kazoo/mambo-whistle
+
+3. NETWORK USE (AGPL-specific)
+   - If you run this software as a web service or SaaS, you MUST:
+     a) Make the complete source code available to all users
+     b) Include a prominent link to the source code repository
+     c) Comply with all other terms of AGPL-3.0
+
+4. MODIFICATION AND REDISTRIBUTION
+   - Modified versions MUST clearly state changes made
+   - Modified versions MUST use AGPL-3.0 or compatible license
+   - You MUST provide source code for all modifications
+
+================================================================================
+
+For the full text of the GNU Affero General Public License v3.0, see:
+https://www.gnu.org/licenses/agpl-3.0.html
+
+================================================================================
+
+PROJECT INFORMATION:
+- Project: Mambo Whistle
+- Author: Ziming Wang
+- Organization: Team Kazoo
+- Repository: https://github.com/Team-Kazoo/mambo-whistle
+- Year: 2025

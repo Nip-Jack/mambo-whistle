@@ -1,87 +1,67 @@
-# Documentation Index
+# 📚 Documentation
 
-Documentation for Mambo Whistle - Real-time neural vocal synthesis engine.
-
-## Quick Links
-
-| I want to... | See |
-|--------------|-----|
-| **Understand design principles** | [../.claude.md](../.claude.md) (root) |
-| **See latest session work** | [sessions/SESSION_LATEST.md](sessions/SESSION_LATEST.md) |
-| **Configure audio system** | [guides/configuration.md](guides/configuration.md) |
-| **Troubleshoot issues** | [guides/troubleshooting.md](guides/troubleshooting.md) |
-| **Understand architecture** | [ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md) |
-| **Optimize latency** | [LATENCY_OPTIMIZATION.md](LATENCY_OPTIMIZATION.md) |
-| **Explore future tech** | [research/FUTURE_TECHNOLOGIES.md](research/FUTURE_TECHNOLOGIES.md) |
-
-## Directory Structure
-
-```
-docs/
-├── README.md                      # This file
-├── ARCHITECTURE_OVERVIEW.md       # System architecture details
-├── LATENCY_OPTIMIZATION.md        # Performance optimization guide
-├── guides/
-│   ├── configuration.md           # Audio system configuration
-│   └── troubleshooting.md         # Common issues and solutions
-├── research/
-│   └── FUTURE_TECHNOLOGIES.md     # Neural audio & hardware roadmap
-└── sessions/
-    └── SESSION_LATEST.md          # Latest session summary (replaced each time)
-```
-
-## Document Descriptions
-
-### Core Documentation
-
-- **[../.claude.md](../.claude.md)** - Design principles and best practices (read by Claude Code every session)
-- **ARCHITECTURE_OVERVIEW.md** - System components, data flow, and design decisions
-- **LATENCY_OPTIMIZATION.md** - Latency reduction strategies (Target: <60ms, Current: ~50-60ms)
-
-### User Guides
-
-- **guides/configuration.md** - How to configure the audio system
-- **guides/troubleshooting.md** - Common problems and solutions
-
-### Research & Future
-
-- **research/FUTURE_TECHNOLOGIES.md** - Neural audio synthesis & embedded hardware roadmap
-
-### Session Summaries
-
-- **sessions/SESSION_LATEST.md** - Latest session work summary (replaced each session)
-
-## Development Workflow
-
-### Before Making Changes
-```bash
-npm test                          # Ensure tests pass
-npm start                         # Test in browser
-```
-
-### In Browser Console
-```javascript
-window.app.getLatencyStats()      # Check latency metrics
-window.container.get('audioIO').mode  # Check audio mode (worklet/script-processor)
-window.container.getServiceNames()    # List registered services
-```
-
-### After Making Changes
-```bash
-npm test                          # Verify tests still pass
-npm start                         # Test changes in browser
-```
-
-## Contributing
-
-When adding new documentation:
-
-1. Place in appropriate location (root docs/ or docs/guides/)
-2. Update this README with a link
-3. Keep documents focused and concise
-4. Follow the project's documentation standards (see [.claude.md](../.claude.md))
+Documentation for **Mambo Whistle** - Real-time neural vocal synthesis engine.
 
 ---
 
-**Last Updated**: 2025-11-22
-**Documentation Version**: v1.0.0
+## 📖 Current Documentation
+
+### Latest Updates (2025-11-25)
+
+- **[BORDER_FIX_AND_ONBOARDING.md](BORDER_FIX_AND_ONBOARDING.md)** - 乐器卡片边框修复 + 用户引导优化
+- **[BUTTON_REDESIGN_APPLE_GOOGLE_STYLE.md](BUTTON_REDESIGN_APPLE_GOOGLE_STYLE.md)** - Start Engine 按钮重新设计 (Apple/Google 风格)
+
+---
+
+## 🗄️ Archive
+
+Historical documentation and development records are archived in [`.archive/`](.archive/) folder.
+
+These include:
+- AI Integration documentation
+- Performance analysis reports
+- Architecture overviews
+- Session records
+- Test scripts
+
+---
+
+## 🚀 Quick Start
+
+### Run Development Server
+```bash
+npm run dev
+# Open http://localhost:3000
+```
+
+### Test in Browser Console
+```javascript
+window.app.getLatencyStats()           // Check latency metrics
+window.container.get('audioIO').mode   // Check audio mode
+window.themeManager.getCurrentTheme()  // Check theme (dark/light)
+```
+
+---
+
+## 🎨 Design System
+
+**The Great Wave Theme**
+- **Primary**: `#1d4ed8` (Deep Indigo)
+- **Secondary**: `#93c5fd` (Seafoam Blue)
+- **Fonts**: Playfair Display (headings) + Outfit (body)
+- **Border Radius**: 20px (cards), 16px (buttons)
+
+---
+
+## 📝 Contributing
+
+When adding new documentation:
+1. Create file in `docs/` root
+2. Use descriptive filename with date prefix if needed
+3. Update this README with link
+4. Move outdated docs to `.archive/`
+
+---
+
+**Last Updated**: 2025-11-25
+**Version**: v2.0.0 (The Great Wave)
