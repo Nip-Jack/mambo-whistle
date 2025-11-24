@@ -1,59 +1,69 @@
 /**
- * 🍎 Apple iOS 26 Liquid Glass - Complete Design System
- * Based on Apple WWDC 2025
- * Release Date: 2025-06-09
- * Applicable: iOS 26, iPadOS 26, macOS Tahoe 26
+ * 🌊 The Great Wave Theme - iOS 26 Liquid Glass Edition
+ * Inspired by Hokusai's "The Great Wave off Kanagawa"
+ * Indigo power and seafoam white
+ *
+ * Original iOS 26 design adapted with The Great Wave color palette
  */
 
 :root {
   /* ================================
-     🎨 色彩系统 (Color System)
+     🎨 The Great Wave 色彩系统
      ================================ */
 
-  /* 主要交互色 */
-  --color-primary: #007AFF;           /* System Blue */
-  --color-secondary: #5AC8FA;         /* System Teal */
-  --color-accent: #5856D6;            /* System Purple */
-  --color-success: #4CD964;           /* System Green */
-  --color-warning: #FFCC00;           /* System Yellow */
-  --color-error: #FF3B30;             /* System Red */
-  --color-pink: #FF2D55;              /* System Pink */
-  --color-orange: #FF9500;            /* System Orange */
+  /* 主要交互色 - The Great Wave Palette */
+  --color-primary: #1d4ed8;           /* Deep Indigo (Wave) */
+  --color-secondary: #93c5fd;         /* Seafoam Blue (Foam) */
+  --color-accent: #1e40af;            /* Darker Indigo (Accent) */
+  --color-success: #10b981;           /* Emerald Green */
+  --color-warning: #f59e0b;           /* Amber */
+  --color-error: #ef4444;             /* Red */
+  --color-info: #3b82f6;              /* Blue */
 
-  /* 背景色系统 */
-  --color-background: #F5F5F7;        /* Light mode background */
-  --color-secondary-background: #FFFFFF;
-  --color-tertiary-background: #F2F2F7;
+  /* Legacy iOS colors (for compatibility) */
+  --color-pink: #ec4899;              /* Pink */
+  --color-orange: #f97316;            /* Orange */
+
+  /* 背景色系统 - Light Mode (Seafoam White) */
+  --color-background: #f0f9ff;        /* Sky Blue Tint */
+  --color-secondary-background: #ffffff; /* Pure White */
+  --color-tertiary-background: #e0f2fe; /* Light Blue */
 
   /* Liquid Glass 表面色 */
-  --color-surface: rgba(255, 255, 255, 0.72);
-  --color-surface-hover: rgba(255, 255, 255, 0.85);
-  --color-surface-border: rgba(209, 213, 219, 0.3);
+  --color-surface: rgba(255, 255, 255, 0.78);
+  --color-surface-hover: rgba(255, 255, 255, 0.90);
+  --color-surface-border: rgba(29, 78, 216, 0.15); /* Indigo tint */
 
-  /* 文本色 (Label) */
-  --color-text: #1D1D1F;              /* Primary text */
-  --color-text-secondary: rgba(60, 60, 67, 0.6);
-  --color-text-tertiary: rgba(60, 60, 67, 0.3);
-  --color-text-quaternary: rgba(60, 60, 67, 0.18);
+  /* 文本色 - Deep Ocean Blue */
+  --color-text: #0c4a6e;              /* Primary text (Dark Cyan) */
+  --color-text-secondary: rgba(12, 74, 110, 0.7);
+  --color-text-tertiary: rgba(12, 74, 110, 0.5);
+  --color-text-quaternary: rgba(12, 74, 110, 0.3);
+  --color-muted: #94a3b8;             /* Muted Gray-Blue */
 
   /* 分隔线 */
-  --color-separator: rgba(60, 60, 67, 0.12);
-  --color-separator-opaque: rgba(60, 60, 67, 0.29);
+  --color-separator: rgba(29, 78, 216, 0.12);
+  --color-separator-opaque: rgba(29, 78, 216, 0.25);
 
   /* 填充色 */
-  --color-fill: rgba(120, 120, 128, 0.2);
-  --color-fill-secondary: rgba(120, 120, 128, 0.16);
-  --color-fill-tertiary: rgba(118, 118, 128, 0.12);
+  --color-fill: rgba(29, 78, 216, 0.08);
+  --color-fill-secondary: rgba(29, 78, 216, 0.06);
+  --color-fill-tertiary: rgba(29, 78, 216, 0.04);
 
   /* ================================
-     🔤 字体系统 (Typography)
+     🔤 字体系统 (Typography) - The Great Wave
      ================================ */
 
-  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
-  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  /* 🌊 The Great Wave Typography */
+  --font-heading: "Playfair Display", "Georgia", serif;  /* Elegant headings */
+  --font-body: "Outfit", -apple-system, BlinkMacSystemFont, system-ui, sans-serif; /* Modern body */
+
+  /* Compatibility aliases */
+  --font-system: "Outfit", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-display: "Playfair Display", "Georgia", serif;
+  --font-text: "Outfit", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Monaco, Consolas, monospace;
-  --font-rounded: -apple-system-rounded, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-rounded: "Outfit", -apple-system-rounded, BlinkMacSystemFont, system-ui, sans-serif;
 
   /* 字体大小 (iOS Standard) */
   --font-size-large-title: 34px;
@@ -86,27 +96,33 @@
   --line-height-loose: 1.6;
 
   /* ================================
-     📐 圆角系统 (Corner Radius)
+     📐 圆角系统 (Corner Radius) - The Great Wave
      ================================ */
 
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 24px;
-  --radius-3xl: 28px;
+  /* 🌊 The Great Wave: 统一使用 1rem (16px) 基准 */
+  --radius: 1rem;                     /* Base radius (16px) */
+  --radius-xs: 0.5rem;                /* 8px */
+  --radius-sm: 0.75rem;               /* 12px */
+  --radius-md: 1rem;                  /* 16px (base) */
+  --radius-lg: 1.25rem;               /* 20px */
+  --radius-xl: 1.5rem;                /* 24px */
+  --radius-2xl: 2rem;                 /* 32px */
+  --radius-3xl: 2.5rem;               /* 40px */
   --radius-full: 9999px;
 
+  /* Border */
+  --border-width: 2px;                /* The Great Wave standard */
+
   /* ================================
-     💧 Liquid Glass 效果
+     💧 Liquid Glass 效果 (🔥 性能优化版)
      ================================ */
 
-  --glass-blur: 20px;
-  --glass-blur-subtle: 10px;
-  --glass-blur-strong: 40px;
-  --glass-opacity: 0.72;
-  --glass-saturation: 180%;
+  /* 🔥 性能优化: 降低blur值和饱和度，减少GPU计算量 */
+  --glass-blur: 16px;           /* 20px → 16px (降低20%) */
+  --glass-blur-subtle: 8px;     /* 10px → 8px (降低20%) */
+  --glass-blur-strong: 24px;    /* 40px → 24px (降低40%) */
+  --glass-opacity: 0.78;        /* 0.72 → 0.78 (提高不透明度补偿) */
+  --glass-saturation: 150%;     /* 180% → 150% (降低饱和度计算) */
 
   /* Glass 高光 */
   --glass-highlight: rgba(255, 255, 255, 0.5);
@@ -173,34 +189,37 @@
 
 /* 使用 data-theme 属性控制主题 */
 html[data-theme="dark"] {
-  /* 背景色 */
-  --color-background: #000000;
-  --color-secondary-background: #1C1C1E;
-  --color-tertiary-background: #2C2C2E;
+  /* 🌊 Dark Mode: Deep Ocean Night (The Great Wave) */
 
-  /* Liquid Glass 表面 */
-  --color-surface: rgba(28, 28, 30, 0.7);
-  --color-surface-hover: rgba(28, 28, 30, 0.85);
-  --color-surface-border: rgba(255, 255, 255, 0.1);
+  /* 背景色 - Dark Ocean */
+  --color-background: #0a1628;        /* Deep Ocean Blue */
+  --color-secondary-background: #0f1f3a; /* Dark Indigo */
+  --color-tertiary-background: #1a2f4f; /* Midnight Blue */
 
-  /* 文本色 */
-  --color-text: #FFFFFF;
-  --color-text-secondary: rgba(235, 235, 245, 0.6);
-  --color-text-tertiary: rgba(235, 235, 245, 0.3);
-  --color-text-quaternary: rgba(235, 235, 245, 0.18);
+  /* Liquid Glass 表面 - Ocean Glass */
+  --color-surface: rgba(15, 31, 58, 0.75);
+  --color-surface-hover: rgba(15, 31, 58, 0.90);
+  --color-surface-border: rgba(147, 197, 253, 0.15); /* Seafoam tint */
 
-  /* 分隔线 */
-  --color-separator: rgba(84, 84, 88, 0.3);
-  --color-separator-opaque: rgba(84, 84, 88, 0.6);
+  /* 文本色 - Seafoam & White */
+  --color-text: #e0f2fe;              /* Light Seafoam */
+  --color-text-secondary: rgba(147, 197, 253, 0.75); /* Seafoam Blue */
+  --color-text-tertiary: rgba(147, 197, 253, 0.5);
+  --color-text-quaternary: rgba(147, 197, 253, 0.3);
+  --color-muted: #64748b;             /* Slate Gray */
 
-  /* 填充色 */
-  --color-fill: rgba(120, 120, 128, 0.36);
-  --color-fill-secondary: rgba(120, 120, 128, 0.32);
-  --color-fill-tertiary: rgba(118, 118, 128, 0.24);
+  /* 分隔线 - Subtle Indigo */
+  --color-separator: rgba(29, 78, 216, 0.2);
+  --color-separator-opaque: rgba(29, 78, 216, 0.4);
 
-  /* Glass 高光 */
-  --glass-highlight: rgba(255, 255, 255, 0.15);
-  --glass-highlight-subtle: rgba(255, 255, 255, 0.08);
+  /* 填充色 - Ocean Tint */
+  --color-fill: rgba(29, 78, 216, 0.15);
+  --color-fill-secondary: rgba(29, 78, 216, 0.12);
+  --color-fill-tertiary: rgba(29, 78, 216, 0.08);
+
+  /* Glass 高光 - Wave Foam */
+  --glass-highlight: rgba(147, 197, 253, 0.15);
+  --glass-highlight-subtle: rgba(147, 197, 253, 0.08);
 
   /* Liquid Glass 专属阴影 - 深色模式 */
   --shadow-glass:

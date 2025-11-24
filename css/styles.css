@@ -24,7 +24,7 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+  font-family: var(--font-body);
   background: var(--color-background);
   color: var(--color-text);
   line-height: var(--line-height-relaxed);
@@ -32,37 +32,78 @@ body {
   transition: background-color 0.3s var(--ease-ios), color 0.3s var(--ease-ios);
 }
 
-/* 深色模式渐变背景 */
+/* 🔥 性能优化: 静态渐变背景 + 轻量级光效 */
+
+/* 深色模式渐变背景 - 静态版本 */
 html[data-theme="dark"] body {
   background: linear-gradient(
     135deg,
     #000000 0%,
-    #0D0D0D 25%,
-    #1A1A1A 50%,
-    #0D0D0D 75%,
-    #000000 100%
+    #0D0D0D 40%,
+    #1A1A1A 60%,
+    #0D0D0D 100%
   );
-  background-size: 400% 400%;
-  animation: gradientShift 60s ease infinite;
+  background-attachment: fixed;
+  position: relative;
 }
 
-/* 浅色模式渐变背景 */
+/* 深色模式 - 微妙动态光效层 (可选，GPU加速) */
+html[data-theme="dark"] body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(26, 26, 26, 0.3) 0%,
+    transparent 50%
+  );
+  opacity: 0.5;
+  animation: subtleGlow 30s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+  will-change: opacity;
+}
+
+/* 浅色模式渐变背景 - 静态版本 */
 html[data-theme="light"] body {
   background: linear-gradient(
     135deg,
     #F5F5F7 0%,
-    #FAFAFA 25%,
-    #FFFFFF 50%,
-    #FAFAFA 75%,
+    #FFFFFF 40%,
+    #FAFAFA 60%,
     #F5F5F7 100%
   );
-  background-size: 400% 400%;
-  animation: gradientShift 60s ease infinite;
+  background-attachment: fixed;
+  position: relative;
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+/* 浅色模式 - 微妙动态光效层 */
+html[data-theme="light"] body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(245, 245, 247, 0.5) 0%,
+    transparent 50%
+  );
+  opacity: 0.3;
+  animation: subtleGlow 30s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+  will-change: opacity;
+}
+
+/* 🔥 轻量级动画 - 仅改变透明度，不触发重排 */
+@keyframes subtleGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
 }
 
 /* 滚动条样式 */
@@ -480,9 +521,9 @@ html[data-theme="light"] .instrument-btn .text-gray-400 {
 .card-inner {
   position: relative;
 
-  /* Liquid Glass Effect */
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  /* Liquid Glass Effect (🔥 使用CSS变量) */
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
   background: var(--color-surface);
 
   border: 1px solid var(--color-surface-border);
@@ -652,9 +693,10 @@ html[data-theme="light"] .instrument-btn .text-gray-400 {
    ================================ */
 
 #visualizer {
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  background: rgba(8, 8, 8, 0.85);
+  /* 🔥 性能优化: 使用变量 + 降低强度 */
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturation));
+  background: rgba(8, 8, 8, 0.9); /* 提高不透明度补偿 */
   border-radius: var(--radius-2xl);
   border: 1px solid rgba(255, 255, 255, 0.08);
 
@@ -722,8 +764,9 @@ html[data-theme="light"] .instrument-btn .text-gray-400 {
    ================================ */
 
 .tip-card {
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  /* 🔥 使用CSS变量 */
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
   background: var(--color-surface);
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-xl);
@@ -760,8 +803,9 @@ html[data-theme="light"] .instrument-btn .text-gray-400 {
 }
 
 .modal {
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  /* 🔥 使用CSS变量 */
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturation));
   background: var(--color-surface-hover);
   border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-2xl);
@@ -889,4 +933,245 @@ html[data-theme="light"] .instrument-btn .text-gray-400 {
 /* Scroll sections */
 .scroll-section {
   scroll-margin-top: 80px;
+}
+
+/* ================================
+   🌊 The Great Wave - Hero Section
+   ================================ */
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: 144px;  /* 2x larger: 72px → 144px */
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 2rem;
+  
+  /* iOS 26 效果 */
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.05),
+    0 8px 16px rgba(0, 0, 0, 0.08);
+  
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 72px;  /* 移动端: 保持原大小 */
+  }
+}
+
+.hero-line {
+  display: inline-block;
+  background: linear-gradient(
+    135deg,
+    var(--color-text) 0%,
+    var(--color-primary) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-gradient {
+  display: inline-block;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 50%,
+    var(--color-accent) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 8s ease infinite;
+  
+  /* Enhanced iOS 26 glow */
+  filter: drop-shadow(0 0 30px rgba(29, 78, 216, 0.3));
+}
+
+html[data-theme="dark"] .hero-gradient {
+  filter: drop-shadow(0 0 40px rgba(147, 197, 253, 0.4));
+}
+
+@keyframes gradientFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: 22px;  /* 稍微放大 */
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  text-align: center;
+  animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+/* ================================
+   🌊 The Great Wave - Typography
+   ================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--color-text);
+  transition: color 0.3s var(--ease-ios);
+}
+
+/* Body text uses Outfit */
+p, li, span, a, button, input, select, textarea {
+  font-family: var(--font-body);
+}
+
+/* ================================
+   🌊 The Great Wave - Components
+   ================================ */
+
+/* Start Engine Button - Wave Theme */
+.start-cta,
+.stop-cta {
+  font-family: var(--font-body);
+  font-weight: 600;
+  border-radius: var(--radius);
+  border: var(--border-width) solid transparent;
+  transition: all 0.3s var(--ease-ios);
+}
+
+.start-cta {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(29, 78, 216, 0.3),
+    0 2px 8px rgba(29, 78, 216, 0.2);
+  border-color: var(--color-primary);
+}
+
+.start-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(29, 78, 216, 0.4),
+    0 4px 12px rgba(29, 78, 216, 0.3);
+}
+
+.start-cta:active {
+  transform: translateY(0);
+}
+
+.stop-cta {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 
+    0 4px 16px rgba(239, 68, 68, 0.3),
+    0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+/* Instrument Cards - Wave Theme */
+.instrument-btn {
+  border: var(--border-width) solid var(--color-separator);
+  border-radius: var(--radius);
+  transition: all 0.3s var(--ease-ios);
+}
+
+.instrument-btn:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(29, 78, 216, 0.15);
+}
+
+.instrument-btn.active {
+  border-color: var(--color-primary);
+  background: linear-gradient(
+    135deg,
+    rgba(29, 78, 216, 0.05),
+    rgba(147, 197, 253, 0.05)
+  );
+  box-shadow: 
+    0 0 0 1px var(--color-primary),
+    0 4px 16px rgba(29, 78, 216, 0.2);
+}
+
+html[data-theme="dark"] .instrument-btn.active {
+  background: linear-gradient(
+    135deg,
+    rgba(29, 78, 216, 0.15),
+    rgba(147, 197, 253, 0.1)
+  );
+}
+
+/* Status Badges - Wave Theme */
+.status-chip {
+  font-family: var(--font-body);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  padding: 0.5rem 1rem;
+  border: var(--border-width) solid var(--color-separator);
+}
+
+.status-ready {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+/* ================================
+   🌊 Dark Mode Enhancements
+   ================================ */
+
+html[data-theme="dark"] body {
+  background: linear-gradient(
+    135deg,
+    #0a1628 0%,
+    #0f1f3a 40%,
+    #1a2f4f 60%,
+    #0f1f3a 100%
+  );
+  background-attachment: fixed;
+}
+
+html[data-theme="dark"] body::before {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(29, 78, 216, 0.15) 0%,
+    transparent 50%
+  );
+}
+
+html[data-theme="light"] body {
+  background: linear-gradient(
+    135deg,
+    #f0f9ff 0%,
+    #ffffff 40%,
+    #e0f2fe 60%,
+    #f0f9ff 100%
+  );
+  background-attachment: fixed;
+}
+
+html[data-theme="light"] body::before {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(147, 197, 253, 0.2) 0%,
+    transparent 50%
+  );
 }

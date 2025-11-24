@@ -200,6 +200,7 @@ export class AiHarmonizer {
 
     /**
      * Generate backing sequence using MusicRNN
+     * 🔥 性能优化: 使用 requestIdleCallback 在浏览器空闲时执行推理
      */
     async _generateBackingSequence() {
         // Need at least 5 notes for meaningful context
@@ -211,54 +212,72 @@ export class AiHarmonizer {
         this.isGenerating = true;
         this._updateStatus('processing', 'AI Thinking...');
 
-        try {
-            // Create unquantized NoteSequence from buffer
-            const unquantizedSeq = {
-                notes: this.noteBuffer.map((pitch, index) => ({
-                    pitch: pitch,
-                    startTime: index * 0.5,
-                    endTime: (index + 1) * 0.5
-                })),
-                totalTime: this.noteBuffer.length * 0.5
-            };
-
-            console.log('[AI Harmonizer] Input sequence:', unquantizedSeq.notes.length, 'notes');
-
-            // Quantize using Magenta's quantizer (CRITICAL!)
-            const quantizedSeq = window.core.sequences.quantizeNoteSequence(unquantizedSeq, 4);
-
-            // Generate continuation (16 steps ≈ 1 bar)
-            const rnnSteps = 16;
-            const result = await this.model.continueSequence(
-                quantizedSeq,
-                rnnSteps,
-                this.temperature
-            );
-
-            console.log('[AI Harmonizer] ✓ Generated', result?.notes?.length || 0, 'notes');
-
-            // Play the result
-            if (result && result.notes && result.notes.length > 0) {
-                this._updateStatus('jamming', '🎸 Jamming!');  // 🔥 新状态: jamming
-                this._playBacking(result.notes);
-
-                // 🔥 演示修复: 播放完成后恢复Listening状态
-                setTimeout(() => {
-                    if (this.enabled) {
-                        this._updateStatus('ready', 'AI Listening...');
-                    }
-                }, 2000);  // 2秒后恢复
+        // 🔥 性能优化关键: 使用 requestIdleCallback 或 setTimeout(0) 延迟执行
+        // 这样可以让浏览器先完成当前帧的渲染和音频处理
+        const scheduleInference = (callback) => {
+            if (typeof requestIdleCallback !== 'undefined') {
+                // 使用 requestIdleCallback (Chrome/Edge)
+                requestIdleCallback(callback, { timeout: 1000 });
             } else {
-                console.warn('[AI Harmonizer] No notes generated');
-                this._updateStatus('ready', 'AI Listening...');
+                // 降级到 setTimeout (Safari/Firefox)
+                setTimeout(callback, 0);
             }
+        };
 
-        } catch (error) {
-            console.error('[AI Harmonizer] ❌ Generation error:', error);
-            this._updateStatus('ready', 'AI Listening...');
-        } finally {
-            this.isGenerating = false;
-        }
+        scheduleInference(async () => {
+            try {
+                // Create unquantized NoteSequence from buffer
+                const unquantizedSeq = {
+                    notes: this.noteBuffer.map((pitch, index) => ({
+                        pitch: pitch,
+                        startTime: index * 0.5,
+                        endTime: (index + 1) * 0.5
+                    })),
+                    totalTime: this.noteBuffer.length * 0.5
+                };
+
+                console.log('[AI Harmonizer] Input sequence:', unquantizedSeq.notes.length, 'notes');
+
+                // Quantize using Magenta's quantizer (CRITICAL!)
+                const quantizedSeq = window.core.sequences.quantizeNoteSequence(unquantizedSeq, 4);
+
+                // 🔥 性能监控: 记录推理时间
+                const startTime = performance.now();
+
+                // Generate continuation (16 steps ≈ 1 bar)
+                const rnnSteps = 16;
+                const result = await this.model.continueSequence(
+                    quantizedSeq,
+                    rnnSteps,
+                    this.temperature
+                );
+
+                const inferenceTime = performance.now() - startTime;
+                console.log(`[AI Harmonizer] ✓ Generated ${result?.notes?.length || 0} notes in ${inferenceTime.toFixed(0)}ms`);
+
+                // Play the result
+                if (result && result.notes && result.notes.length > 0) {
+                    this._updateStatus('jamming', '🎸 Jamming!');  // 🔥 新状态: jamming
+                    this._playBacking(result.notes);
+
+                    // 🔥 演示修复: 播放完成后恢复Listening状态
+                    setTimeout(() => {
+                        if (this.enabled) {
+                            this._updateStatus('ready', 'AI Listening...');
+                        }
+                    }, 2000);  // 2秒后恢复
+                } else {
+                    console.warn('[AI Harmonizer] No notes generated');
+                    this._updateStatus('ready', 'AI Listening...');
+                }
+
+            } catch (error) {
+                console.error('[AI Harmonizer] ❌ Generation error:', error);
+                this._updateStatus('ready', 'AI Listening...');
+            } finally {
+                this.isGenerating = false;
+            }
+        });
     }
 
     /**
