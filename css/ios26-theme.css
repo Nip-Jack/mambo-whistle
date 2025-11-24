@@ -123,7 +123,7 @@
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
 
-  /* Liquid Glass 专属阴影 */
+  /* Liquid Glass 专属阴影 - 浅色模式 */
   --shadow-glass:
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 4px 16px rgba(0, 0, 0, 0.08),
@@ -161,7 +161,7 @@
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   /* ================================
-     🌓 深色模式准备
+     🌓 主题系统
      ================================ */
 
   color-scheme: light;
@@ -171,39 +171,49 @@
    🌙 深色模式 (Dark Mode)
    ================================ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* 背景色 */
-    --color-background: #000000;
-    --color-secondary-background: #1C1C1E;
-    --color-tertiary-background: #2C2C2E;
+/* 使用 data-theme 属性控制主题 */
+html[data-theme="dark"] {
+  /* 背景色 */
+  --color-background: #000000;
+  --color-secondary-background: #1C1C1E;
+  --color-tertiary-background: #2C2C2E;
 
-    /* Liquid Glass 表面 */
-    --color-surface: rgba(28, 28, 30, 0.7);
-    --color-surface-hover: rgba(28, 28, 30, 0.85);
-    --color-surface-border: rgba(255, 255, 255, 0.1);
+  /* Liquid Glass 表面 */
+  --color-surface: rgba(28, 28, 30, 0.7);
+  --color-surface-hover: rgba(28, 28, 30, 0.85);
+  --color-surface-border: rgba(255, 255, 255, 0.1);
 
-    /* 文本色 */
-    --color-text: #FFFFFF;
-    --color-text-secondary: rgba(235, 235, 245, 0.6);
-    --color-text-tertiary: rgba(235, 235, 245, 0.3);
-    --color-text-quaternary: rgba(235, 235, 245, 0.18);
+  /* 文本色 */
+  --color-text: #FFFFFF;
+  --color-text-secondary: rgba(235, 235, 245, 0.6);
+  --color-text-tertiary: rgba(235, 235, 245, 0.3);
+  --color-text-quaternary: rgba(235, 235, 245, 0.18);
 
-    /* 分隔线 */
-    --color-separator: rgba(84, 84, 88, 0.3);
-    --color-separator-opaque: rgba(84, 84, 88, 0.6);
+  /* 分隔线 */
+  --color-separator: rgba(84, 84, 88, 0.3);
+  --color-separator-opaque: rgba(84, 84, 88, 0.6);
 
-    /* 填充色 */
-    --color-fill: rgba(120, 120, 128, 0.36);
-    --color-fill-secondary: rgba(120, 120, 128, 0.32);
-    --color-fill-tertiary: rgba(118, 118, 128, 0.24);
+  /* 填充色 */
+  --color-fill: rgba(120, 120, 128, 0.36);
+  --color-fill-secondary: rgba(120, 120, 128, 0.32);
+  --color-fill-tertiary: rgba(118, 118, 128, 0.24);
 
-    /* Glass 高光 */
-    --glass-highlight: rgba(255, 255, 255, 0.15);
-    --glass-highlight-subtle: rgba(255, 255, 255, 0.08);
+  /* Glass 高光 */
+  --glass-highlight: rgba(255, 255, 255, 0.15);
+  --glass-highlight-subtle: rgba(255, 255, 255, 0.08);
 
-    color-scheme: dark;
-  }
+  /* Liquid Glass 专属阴影 - 深色模式 */
+  --shadow-glass:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 var(--glass-highlight);
+
+  --shadow-glass-hover:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 8px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 var(--glass-highlight);
+
+  color-scheme: dark;
 }
 
 /* ================================

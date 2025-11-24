@@ -25,12 +25,15 @@ html {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
-  background: #000000;
-  color: #FFFFFF;
+  background: var(--color-background);
+  color: var(--color-text);
   line-height: var(--line-height-relaxed);
   overflow-x: hidden;
+  transition: background-color 0.3s var(--ease-ios), color 0.3s var(--ease-ios);
+}
 
-  /* 深色渐变背景 */
+/* 深色模式渐变背景 */
+html[data-theme="dark"] body {
   background: linear-gradient(
     135deg,
     #000000 0%,
@@ -38,6 +41,20 @@ body {
     #1A1A1A 50%,
     #0D0D0D 75%,
     #000000 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 60s ease infinite;
+}
+
+/* 浅色模式渐变背景 */
+html[data-theme="light"] body {
+  background: linear-gradient(
+    135deg,
+    #F5F5F7 0%,
+    #FAFAFA 25%,
+    #FFFFFF 50%,
+    #FAFAFA 75%,
+    #F5F5F7 100%
   );
   background-size: 400% 400%;
   animation: gradientShift 60s ease infinite;
@@ -64,42 +81,36 @@ body {
    🍎 Liquid Glass Components
    ================================ */
 
-/* 主要玻璃容器 - 深色 */
+/* 主要玻璃容器 */
 .glass {
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-  background: rgba(28, 28, 30, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 4px 16px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  box-shadow: var(--shadow-glass);
   transition: all var(--transition-base) var(--ease-ios);
 }
 
 .glass:hover {
-  background: rgba(28, 28, 30, 0.85);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.5),
-    0 8px 20px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  background: var(--color-surface-hover);
+  box-shadow: var(--shadow-glass-hover);
   transform: translateY(-2px);
 }
 
-/* 强化玻璃效果（导航栏等） - 深色 */
+/* 强化玻璃效果（导航栏等） */
 .glass-strong {
   backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturation));
   -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturation));
-  background: rgba(18, 18, 18, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-surface-border);
 }
 
 /* 微妙玻璃效果 */
 .glass-subtle {
   backdrop-filter: blur(var(--glass-blur-subtle));
   -webkit-backdrop-filter: blur(var(--glass-blur-subtle));
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
 }
 
 /* ================================
@@ -111,7 +122,299 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
-  color: #FFFFFF;
+  color: var(--color-text);
+  transition: color 0.3s var(--ease-ios);
+}
+
+/* ================================
+   🎯 Navigation & UI Elements
+   ================================ */
+
+/* Logo & Brand */
+.nav-logo {
+  color: var(--color-text) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+.nav-subtitle {
+  color: var(--color-text-secondary) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+.nav-link {
+  color: var(--color-text-secondary) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+.nav-link:hover {
+  color: var(--color-text) !important;
+}
+
+/* Theme-aware buttons and badges */
+.theme-button,
+.theme-badge {
+  transition: all 0.3s var(--ease-ios);
+}
+
+html[data-theme="dark"] .theme-button,
+html[data-theme="dark"] .theme-badge {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: var(--color-text) !important;
+}
+
+html[data-theme="dark"] .theme-button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .theme-button:active {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+html[data-theme="light"] .theme-button,
+html[data-theme="light"] .theme-badge {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
+  color: #1D1D1F !important;
+}
+
+html[data-theme="light"] .theme-button:hover {
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+html[data-theme="light"] .theme-button:active {
+  background: rgba(243, 243, 243, 1) !important;
+}
+
+/* ================================
+   ⚙️ Settings Modal
+   ================================ */
+
+/* Settings panel background */
+#settingsPanel {
+  background: var(--color-secondary-background) !important;
+  transition: background-color 0.3s var(--ease-ios);
+}
+
+/* Settings sections */
+.settings-section-bg {
+  background: var(--color-tertiary-background) !important;
+  border-color: var(--color-separator) !important;
+  transition: all 0.3s var(--ease-ios);
+}
+
+/* Settings inputs and selects */
+.settings-input,
+.settings-select {
+  background: var(--color-tertiary-background) !important;
+  border-color: var(--color-separator) !important;
+  color: var(--color-text) !important;
+  transition: all 0.3s var(--ease-ios);
+}
+
+.settings-input:focus,
+.settings-select:focus {
+  border-color: var(--color-primary) !important;
+}
+
+/* Settings text colors */
+.settings-heading {
+  color: var(--color-text) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+.settings-subtext {
+  color: var(--color-text-secondary) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+.settings-label {
+  color: var(--color-text-tertiary) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+/* Settings sections and controls - 深色/浅色适配 */
+.settings-section {
+  background: var(--color-tertiary-background) !important;
+  border-color: var(--color-separator) !important;
+  transition: all 0.3s var(--ease-ios);
+}
+
+.settings-inner-section {
+  background: var(--color-secondary-background) !important;
+  border-color: var(--color-separator) !important;
+  transition: all 0.3s var(--ease-ios);
+}
+
+/* Settings segmented controls */
+.settings-control-bg {
+  background: var(--color-secondary-background) !important;
+  transition: background-color 0.3s var(--ease-ios);
+}
+
+/* Settings divider */
+.settings-divider {
+  border-color: var(--color-separator) !important;
+  transition: border-color 0.3s var(--ease-ios);
+}
+
+/* ================================
+   📝 Content Text (Tips, Sections, etc.)
+   ================================ */
+
+/* Section headings and text that need theme adaptation */
+.section-heading {
+  color: var(--color-text) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+.section-text {
+  color: var(--color-text-secondary) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+.section-subtext {
+  color: var(--color-text-tertiary) !important;
+  transition: color 0.3s var(--ease-ios);
+}
+
+/* ================================
+   🎨 Instrument Cards - Theme Aware
+   ================================ */
+
+/* 深色主题：遮罩层保持较深 */
+html[data-theme="dark"] .instrument-card-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme="dark"] .instrument-btn.active .instrument-card-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* 浅色主题：遮罩层非常浅，只有10%让图片非常亮 */
+html[data-theme="light"] .instrument-card-overlay {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .instrument-btn.active .instrument-card-overlay {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* ================================
+   🎹 AI Jam Button - Theme Aware
+   ================================ */
+
+/* 浅色主题 - 保持 Google 白色风格 */
+html[data-theme="light"] .ai-jam-btn {
+  background: white !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+html[data-theme="light"] .ai-jam-text {
+  color: #374151 !important; /* gray-700 */
+}
+
+html[data-theme="light"] .ai-jam-status {
+  color: #6B7280 !important; /* gray-500 */
+}
+
+html[data-theme="light"] .ai-jam-notice-bg {
+  background: white !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+html[data-theme="light"] .ai-jam-notice-title {
+  color: #111827 !important; /* gray-900 */
+}
+
+html[data-theme="light"] .ai-jam-notice-text {
+  color: #4B5563 !important; /* gray-600 */
+}
+
+html[data-theme="light"] .ai-jam-notice-info {
+  color: #6B7280 !important; /* gray-500 */
+}
+
+/* 深色主题 - 深色卡片 */
+html[data-theme="dark"] .ai-jam-btn {
+  background: var(--color-surface) !important;
+  border-color: var(--color-surface-border) !important;
+}
+
+html[data-theme="dark"] .ai-jam-text {
+  color: var(--color-text) !important;
+}
+
+html[data-theme="dark"] .ai-jam-status {
+  color: var(--color-text-secondary) !important;
+}
+
+html[data-theme="dark"] .ai-jam-notice-bg {
+  background: var(--color-surface) !important;
+  border-color: var(--color-surface-border) !important;
+}
+
+html[data-theme="dark"] .ai-jam-notice-title {
+  color: var(--color-text) !important;
+}
+
+html[data-theme="dark"] .ai-jam-notice-text {
+  color: var(--color-text-secondary) !important;
+}
+
+html[data-theme="dark"] .ai-jam-notice-info {
+  color: var(--color-text-tertiary) !important;
+}
+
+/* ================================
+   ⚡ Mode Icon Background - Theme Aware
+   ================================ */
+
+/* Continuous Mode 闪电图标背景 */
+.mode-icon-bg {
+  transition: all 0.3s var(--ease-ios);
+}
+
+html[data-theme="dark"] .mode-icon-bg {
+  background: rgba(59, 130, 246, 0.4) !important; /* blue-900/40 equivalent in dark */
+}
+
+html[data-theme="light"] .mode-icon-bg {
+  background: rgba(191, 219, 254, 0.8) !important; /* blue-100 with more opacity in light */
+}
+
+/* ================================
+   🖼️ Instrument Card Images - Theme Aware
+   ================================ */
+
+/* 乐器卡片背景图片亮度调整 */
+.instrument-card-image {
+  transition: filter 0.3s var(--ease-ios), transform 0.7s var(--ease-ios);
+}
+
+html[data-theme="dark"] .instrument-card-image {
+  filter: brightness(1.0); /* 深色模式：保持原图亮度，遮罩层会让它变暗 */
+}
+
+html[data-theme="light"] .instrument-card-image {
+  filter: brightness(1.1); /* 浅色模式：图片稍微提亮，配合浅色遮罩 */
+}
+
+.instrument-btn:hover .instrument-card-image {
+  transform: scale(1.1);
+}
+
+/* 乐器卡片内的图标和文字 - 浅色模式变黑色 */
+html[data-theme="light"] .instrument-btn svg {
+  color: #1D1D1F !important; /* 黑色图标 */
+}
+
+html[data-theme="light"] .instrument-btn .font-semibold {
+  color: #1D1D1F !important; /* 黑色标题 */
+}
+
+html[data-theme="light"] .instrument-btn .text-gray-400 {
+  color: #6B7280 !important; /* 深灰色描述文字 */
 }
 
 .large-title {
@@ -177,33 +480,27 @@ h1, h2, h3, h4, h5, h6 {
 .card-inner {
   position: relative;
 
-  /* Liquid Glass Effect - 深色 */
+  /* Liquid Glass Effect */
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  background: rgba(28, 28, 30, 0.7);
+  background: var(--color-surface);
 
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--color-surface-border);
   border-radius: var(--radius-2xl);
 
-  /* iOS Shadow Stack - 深色 */
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  /* iOS Shadow Stack */
+  box-shadow: var(--shadow-glass);
 
   transition: all var(--transition-base) var(--ease-ios);
   z-index: 10;
   overflow: hidden;
 }
 
-/* Hover State - 深色 */
+/* Hover State */
 .instrument-btn:hover .card-inner {
   transform: translateY(-4px) scale(1.02);
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.6),
-    0 6px 16px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-glass-hover);
+  border-color: var(--color-surface-border);
 }
 
 /* Active State - iOS 26 Style */
@@ -233,7 +530,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .instrument-btn.active .card-inner {
-  background: rgba(28, 28, 30, 0.95);
+  background: var(--color-surface-hover);
   border-color: transparent;
   transform: scale(0.98);
   box-shadow:
