@@ -1,16 +1,17 @@
 # Technical Report Figures
 
-This directory contains MATLAB scripts for generating publication-quality figures for the Mambo Whistle Technical Report.
+This directory contains Python scripts for generating publication-quality figures for the Mambo Whistle Technical Report.
 
 ## Directory Structure
 
 ```
 figures/
-├── scripts/           # MATLAB source files
-│   ├── figure1_pitch_detection_comparison.m
-│   ├── figure5_yin_algorithm_visualization.m
-│   └── figure7_latency_breakdown.m
-├── output/            # Generated figures (PNG, PDF, EPS)
+├── scripts/           # Python source files
+│   ├── figure1_pitch_detection_comparison.py
+│   ├── figure5_yin_algorithm_visualization.py
+│   └── figure7_latency_breakdown.py
+├── output/            # Generated figures (PNG, PDF, SVG)
+├── requirements.txt   # Python dependencies
 └── README.md
 ```
 
@@ -47,21 +48,35 @@ All figures follow these specifications:
   - Yellow: #FBBC05 (rgb: 251, 188, 5)
   - Green: #34A853 (rgb: 52, 168, 83)
 - **Resolution**: 300 DPI for PNG
-- **Export Formats**: PNG, PDF, EPS
+- **Export Formats**: PNG, PDF, SVG
+
+## Installation
+
+```bash
+cd docs/figures
+pip install -r requirements.txt
+```
 
 ## Usage
 
-1. Open MATLAB
-2. Navigate to the `scripts/` directory
-3. Run any script:
-   ```matlab
-   run('figure1_pitch_detection_comparison.m')
-   run('figure5_yin_algorithm_visualization.m')
-   run('figure7_latency_breakdown.m')
-   ```
-4. Output files will be saved to `output/`
+```bash
+# Generate all figures
+cd scripts
+python figure1_pitch_detection_comparison.py
+python figure5_yin_algorithm_visualization.py
+python figure7_latency_breakdown.py
+```
+
+Or run all at once:
+```bash
+for f in scripts/*.py; do python "$f"; done
+```
+
+Output files will be saved to `output/` directory.
 
 ## Requirements
 
-- MATLAB R2019b or later
-- No additional toolboxes required (uses base MATLAB only)
+- Python 3.8+
+- NumPy >= 1.20.0
+- Matplotlib >= 3.5.0
+- Times New Roman font (usually pre-installed on Windows/macOS)
